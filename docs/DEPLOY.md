@@ -33,3 +33,12 @@ npx wrangler secret put RESEND_API_KEY
 - [ ] Cadastro → e-mail chega → link abre `/veroid/auth/callback` e entra no app
 - [ ] Criar organização → aparece `organization.created` em Atividade recente
 - [ ] Rotas fora de `/veroid` continuam servindo o portfólio
+
+## Vitrine estática no GitHub Pages
+Espelho só-front do app em `ogabrielmoreira.github.io/veroid/` — o caminho do Pages coincide com o `BASE_PATH` `/veroid/`, então o build sai pronto, sem reescrita.
+
+Em **Settings → Pages → Source**, escolha **GitHub Actions** (não "Deploy from a branch"). O workflow `.github/workflows/pages.yml` roda a cada push em `main`: build, cópia de `index.html` para `404.html` (fallback de SPA) e publicação.
+
+Limites em relação ao deploy no Workers:
+- `/veroid/api/*` não existe — a reanálise com Claude Vision na tela de sessão falha; o fluxo do titular cai no sinal "IA não executada (modo local)".
+- `public/_headers` é ignorado pelo Pages: sem `Permissions-Policy` próprio. A câmera segue liberada (https, mesma origem).
