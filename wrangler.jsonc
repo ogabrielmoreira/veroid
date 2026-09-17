@@ -1,0 +1,31 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vero-id",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-09-16",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    // O Worker roda primeiro em /veroid/* para servir a API e o fallback de SPA
+    // a partir de /veroid/index.html (o fallback nativo só conhece /index.html).
+    "run_worker_first": ["/veroid/*", "/veroid"]
+  },
+  // App montado como caminho do portfólio: gabrielmoreira.tech/veroid
+  // Requer o registro DNS do domínio raiz como "Proxied" (nuvem laranja) na Cloudflare.
+  "routes": [
+    { "pattern": "gabrielmoreira.tech/veroid*", "zone_name": "gabrielmoreira.tech" }
+  ],
+  // Cron diário: keep-alive do Supabase (plano gratuito pausa após ~7 dias sem uso)
+  "triggers": { "crons": ["0 6 * * *"] },
+  "vars": {
+    "APP_MODE": "demo",
+    "BASE_PATH": "/veroid",
+    "SUPABASE_URL": "https://ajhfysjgaqduomkmkeec.supabase.co",
+    // Chave pública (publishable). Segredos vão por `wrangler secret put`.
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_OHrtmLpE3dLqlIs1Wtuhvw_4w_Pf3nZ",
+    // Copiloto (opcional, pago por uso na Anthropic): só roda com ANTHROPIC_API_KEY e SUPABASE_SECRET_KEY definidos
+    "AI_MODEL": "claude-haiku-4-5-20251001",
+    "AI_DAILY_LIMIT": "300"
+  },
+  "observability": { "enabled": true }
+}

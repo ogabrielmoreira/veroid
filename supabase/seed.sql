@@ -1,0 +1,1 @@
+-- Seed de demonstração entra na fase 8.

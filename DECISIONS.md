@@ -1,0 +1,145 @@
+# Registro de decisões — Vero ID
+
+Formato: contexto → decisão → consequência. Datas em America/Sao_Paulo.
+
+## D-001 · Supabase no plano Free, região São Paulo (16/09/2026)
+- **Contexto:** protótipo de portfólio, custo zero, titulares e organizações no Brasil.
+- **Decisão:** organização Supabase no plano Free, projeto `vero-id` em `sa-east-1`. "Automatically expose new tables" **desligado** (grants explícitos nas migrations) e "automatic RLS" **ligado** como rede de segurança.
+- **Consequência:** projeto pausa após ~7 dias sem uso → cron diário do Worker chama `public.ping_heartbeat()`.
+
+## D-002 · App em `gabrielmoreira.tech/veroid`, não em subdomínio (16/09/2026)
+- **Contexto:** o prompt original previa `kyc.gabrielmoreira.tech`. Gabriel preferiu o app como página do portfólio.
+- **Decisão:** Vite com `base: '/veroid/'`, build em `dist/veroid`, React Router com `basename`. O Worker é publicado com **route** `gabrielmoreira.tech/veroid*` e roda primeiro nesse caminho (API em `/veroid/api/*` + fallback de SPA). O resto do domínio continua no GitHub Pages.
+- **Consequência:** o registro DNS do domínio raiz precisa estar **Proxied** (nuvem laranja) na Cloudflare para a route funcionar. Sem CORS: front e API na mesma origem. Plano B: publicar `dist/veroid` numa pasta `veroid/` do repositório do portfólio (GitHub Pages) com o truque do `404.html`, e a API num Worker separado.
+
+## D-003 · Supabase Auth: Site URL e Redirect URLs só do domínio (16/09/2026)
+- **Decisão:** Site URL `https://gabrielmoreira.tech/veroid`; Redirect URLs `https://gabrielmoreira.tech/veroid` e `https://gabrielmoreira.tech/veroid/**`. Sem localhost, a pedido.
+- **Consequência:** para testar links de e-mail em `npm run dev`, é preciso adicionar `http://localhost:5173/**` temporariamente. O login por senha e o código digitado funcionam em qualquer origem.
+
+## D-004 · E-mail: SMTP padrão por enquanto, Resend depois (16/09/2026)
+- **Contexto:** o SMTP padrão do Supabase (1) só entrega para e-mails de membros da organização Supabase, (2) tem limite baixo por hora e (3) no Free não permite editar templates — o e-mail de confirmação vem com **link**, sem `{{ .Token }}`.
+- **Decisão:** o cadastro funciona nos dois modos: tela de código de 6 dígitos **e** rota `/auth/callback` (PKCE) para o link. OTP em todo login fica atrás de `VITE_LOGIN_EMAIL_OTP` (padrão `false`). OTP configurado com 6 dígitos e 10 minutos; senha mínima de 8.
+- **Consequência:** a demo pública para recrutadores exige SMTP próprio (Resend grátis + DNS do domínio na Cloudflare). Passo a passo em `docs/SUPABASE.md`.
+
+## D-005 · Organização criada por RPC `security definer`
+- **Decisão:** usuários autenticados **não** têm `insert` em `organizations`/`memberships`. A criação passa por `public.create_organization()`, que valida CNPJ, bloqueia o nicho restrito (apostas), limita 3 organizações por conta, cria a membership `owner`, o fluxo padrão do nicho e o registro de auditoria numa única transação.
+- **Consequência:** impossível se auto-promover a membro de outra organização via Data API (coberto por `supabase/tests/rls_isolation.sql`).
+
+## D-006 · Helpers de RLS em schema `private`
+- **Decisão:** `is_org_member`, `has_org_role`, `shares_org_with` ficam em `private` (não exposto pela Data API), `security definer` com `search_path = ''` para evitar recursão de RLS em `memberships`.
+
+## D-007 · Tailwind v4 + componentes próprios no estilo shadcn
+- **Decisão:** tokens do Design System em CSS variables (`src/styles/tokens.css`) mapeados no `@theme` do Tailwind. Componentes escritos à mão seguindo o DS (em vez do CLI do shadcn) para não herdar raios/sombras fora do sistema.
+
+## D-008 · Chave publishable no repositório
+- **Decisão:** `sb_publishable_…` aparece em `wrangler.jsonc` (vars) e no `.env.example` como formato. É pública por design e a proteção é o RLS. A chave secreta (`sb_secret_…`) **nunca** vai para o repositório: `wrangler secret put SUPABASE_SECRET_KEY`.
+
+## D-009 · Links de verificação por RPC no Postgres, não pelo Worker (17/09/2026)
+- **Contexto:** o prompt previa `POST /api/links` no Worker com a chave secreta. Na demo não há SMS real nem segredo necessário para gerar o link.
+- **Decisão:** `create_verification_link`, `create_verification_links_batch`, `resend_verification_link`, `cancel_verification_link` e `mark_link_shared` são funções `security definer` que checam o papel (proprietário/analista). O token (18 bytes aleatórios, base64url) só existe em claro no retorno da criação; o banco guarda o SHA-256. Reenviar gera token novo e invalida o anterior.
+- **Consequência:** funciona sem a chave secreta e é testável no SQL Editor (`supabase/tests/phase2_3.sql`). Quando entrar SMS/e-mail real (`APP_MODE=live`), o Worker passa a chamar a mesma RPC e dispara o `MessagingProvider`. Turnstile e rate limit por IP entram no Worker na fase 4.
+
+## D-010 · Página pública do titular via `get_public_link` (anon)
+- **Decisão:** a rota `/v/:token` chama uma RPC anônima que devolve só nome e marca da organização, primeiro nome do titular, validade e fluxo. Telefone, e-mail e referência nunca saem. Primeira abertura muda o estado para "Link aberto".
+- **Consequência:** a tela de abertura com a marca já funciona; consentimento e captura chegam na fase 4.
+
+## D-011 · Canais simulados na demo
+- **Decisão:** SMS e e-mail contam como "Enviado" na criação e mostram a mensagem pronta; WhatsApp usa `wa.me` (grátis, sem API) e QR Code é gerado no navegador. WhatsApp e QR só viram "Enviado" quando o link é copiado, aberto no WhatsApp ou o QR é baixado.
+
+## D-012 · Brand Kit: primária escolhida é a primária usada
+- **Decisão:** a cor escolhida vira `--brand-primary`; a escala 50–900 é gerada em OKLCH com luminosidade calibrada na escala indigo do DS (tints para superfícies e o passo 300 para o dark mode). Contraste com texto branco ≥4,5:1 é obrigatório para salvar; secundária e destaque exigem 3:1. Quando falha, o editor sugere o passo mais próximo que passa.
+- **Consequência:** tokens de risco nunca mudam. O Brand Kit é validado também no banco (`organizations_brand_kit_valid`). Logos vão para o bucket público `brand` (escrita só do proprietário, pasta = organização).
+
+## D-013 · Convites por link copiável
+- **Decisão:** `invite_member` devolve o link do convite uma única vez; o e-mail de convite fica para quando houver SMTP próprio. O aceite exige estar logado com o mesmo e-mail do convite.
+
+## D-014 · Sessão do titular anônima com segredo próprio (17/09/2026)
+- **Decisão:** ao tocar em "Começar", `start_subject_session` cria a sessão e devolve um segredo (guardado só como hash). Todas as chamadas seguintes exigem token do link + id da sessão + segredo. O navegador guarda id e segredo em `localStorage` (nenhum dado pessoal) para retomar se a página fechar; o rascunho do formulário fica em `sessionStorage`.
+- **Consequência:** o titular nunca acessa tabelas; só RPCs com escopo da própria sessão. Até 5 sessões por link.
+
+## D-015 · Upload direto ao Storage em caminho registrado
+- **Contexto:** URL assinada de upload exige a chave secreta (Worker). Na demo, o Worker pode não ter segredo configurado.
+- **Decisão:** `register_subject_media` registra o caminho `<org>/<sessão>/<tipo>-<aleatório>.jpg`; a policy `media_subject_insert` só aceita INSERT (sem leitura, sem sobrescrita) em caminhos registrados de sessões abertas há menos de 6 horas. Leitura continua restrita a proprietário/analista.
+- **Consequência:** funciona sem segredo. Com o Worker configurado, dá para trocar por URL assinada sem mudar o front.
+
+## D-016 · Copiloto: regras no banco + IA opcional
+- **Contexto:** a API da Anthropic é paga por uso, e o projeto deve rodar de graça.
+- **Decisão:** o motor de risco é SQL (`private.analyze_session`) com catálogo fixo de sinais e pesos (o cliente só informa códigos; peso vem do catálogo). Faixas 0–30 / 31–70 / 71–100; regras que forçam revisão; "prova de vida indisponível" ou IA inconclusiva viram faixa "indeterminado". A camada Claude Vision está pronta no Worker (`/veroid/api/analyze`, `claude-haiku-4-5-20251001`, teto diário, timeout de 15 s, JSON validado) e só roda com `ANTHROPIC_API_KEY` e `SUPABASE_SECRET_KEY`. Sem chave, a sessão recebe o sinal "IA não executada (modo local)" com peso zero.
+- **Consequência:** a demo funciona 100% grátis com análise por regras; ligar a IA é só configurar dois segredos.
+
+## D-017 · MediaPipe servido do próprio domínio
+- **Decisão:** `scripts/prepare-mediapipe.mjs` roda antes de `dev`/`build`, copia os WASM do pacote para `public/mediapipe/wasm` e baixa o modelo `face_landmarker.task`. Se o download falhar, o app tenta o CDN do Google; se também falhar (ou o navegador não tiver WASM/WebGL), a captura cai no modo simples com o sinal "prova de vida indisponível" → revisão manual. CSP inclui `wasm-unsafe-eval`.
+- **Heurística de prova de vida:** rosto único, tamanho e centralização na moldura, luz mínima, estabilidade e desafio aleatório (piscar via blendshapes ou virar e voltar via yaw estimado por landmarks). É demonstração, não liveness certificado.
+
+## D-018 · Painel inteiro numa única RPC (`dashboard_stats`) (17/09/2026)
+- **Contexto:** o painel tem 9 gráficos/blocos (funil, fraude por tipo, tendência, histograma, mapa por UF, heatmap, dispositivos, KPI de nicho, indicadores) — buscar cada um separado do front geraria N+1 chamadas e faria o Postgres reprocessar `sessions_view` a cada gráfico.
+- **Decisão:** `public.dashboard_stats(org, from, to, filtros)` monta uma tabela temporária (`_ds`) uma vez por chamada a partir de `sessions_view` (já filtrada por período/canal/faixa/decisão) e devolve um único JSON com todos os blocos. Período anterior é a mesma janela imediatamente antes, para os deltas do painel. Clique num gráfico filtra a lista de sessões abaixo via um `TableFilter` tipado, sem nova chamada ao `dashboard_stats`.
+- **Consequência:** um round-trip por carregamento/filtro do painel. `sessions_view` faz o trabalho pesado de parsing (UF pelo CEP, sistema/navegador pelo `user_agent`, dia/hora em America/Sao_Paulo) uma vez, em SQL, reaproveitado tanto pelo painel quanto pela fila de revisão e pela tabela de sessões.
+
+## D-019 · Score de Qualificação sem componente de crédito
+- **Decisão:** o Score de Qualificação (para a lista de Clientes Qualificados) é 50% confiança de identidade (100 − Score de Risco) + 25% completude do cadastro + 25% recência da verificação — calculado por um trigger (`private.session_enrich`) na sessão, não em tempo de leitura. O bureau de crédito (mock) é **separado** e só pode ser consultado com finalidade `credit_analysis`, nunca soma ao score nem alimenta a lista de qualificados.
+- **Consequência:** a régua de "quem entra em Clientes Qualificados" (aprovado + opt-in de marketing + score ≥ mínimo configurável) nunca depende de dado de crédito — mantém a separação de finalidade exigida pela LGPD entre "ofertas" e "análise de crédito".
+
+## D-020 · Bureau de crédito mock: determinístico, com finalidade e cache de 24h
+- **Contexto:** o prompt pede uma simulação de bureau, auditável e sem dado real saindo do sistema.
+- **Decisão:** `run_bureau_check(subject, purpose)` exige `purpose = 'credit_analysis'` (qualquer outro valor é rejeitado), exige que o titular já tenha sessão aprovada, e deriva a faixa (baixo/médio/alto) de um hash do `cpf_hash`/id do titular — mesma pessoa sempre cai na mesma faixa. Resultado é cacheado por 24h (nova chamada dentro da janela devolve o mesmo registro em vez de duplicar) e cada consulta grava em `audit_logs`.
+- **Consequência:** demonstração 100% local (nenhuma chamada de rede, nenhum provedor real), mas com o mesmo contrato de auditoria e finalidade que uma integração real teria.
+
+## D-021 · Decisão do analista, notas e nova captura só por RPC auditada
+- **Decisão:** `decide_session` exige sessão enviada e motivo (mínimo 3 caracteres) para reprovar; aprovar contra a recomendação da IA exige confirmação explícita no front. `add_session_note`, `request_new_capture` e `log_media_view` seguem o mesmo padrão: checam papel (proprietário/analista), gravam em `audit_logs` com antes/depois, e nunca ficam disponíveis para o papel leitor. `update_org_settings` é a única forma de alterar `organizations.settings` — o `UPDATE` direto na coluna é revogado do papel autenticado.
+- **Consequência:** todo o histórico de decisões, notas e mudanças de configuração é reconstruível pelo log de auditoria (imutável — sem UPDATE/DELETE mesmo para o dono), cobrindo o requisito de rastreabilidade do prompt original.
+
+## D-022 · Webhook para CRM: HTTPS obrigatório, assinado, sem SSRF
+- **Decisão:** o Worker (`worker/webhooks.ts`) só aceita `webhook_url` HTTPS e recusa hosts locais/privados/por IP direto (`isSafeWebhookUrl`). O corpo é assinado com HMAC-SHA256 (`X-Veroid-Signature`) usando a chave secreta do Worker; o teste (`/api/webhooks/test`) exige papel de proprietário, o envio de Clientes Qualificados (`/api/webhooks/qualified`) aceita proprietário ou analista. Configurações do webhook são lidas com o JWT do próprio usuário (RLS se aplica), nunca com a chave de serviço.
+- **Consequência:** nenhuma varredura de rede interna é possível a partir do campo configurável pelo usuário; a assinatura permite ao CRM validar a origem da chamada.
+
+## D-023 · Painel público reaproveita a mesma agregação do painel autenticado
+- **Contexto:** "Explorar sem cadastro" precisa do mesmo painel rico (funil, mapa, heatmap etc.) sem exigir login, mas sem duplicar ~150 linhas de SQL nem abrir `dashboard_stats` para `anon`.
+- **Decisão:** a lógica de agregação foi extraída para `private.dashboard_stats_for(...)` (schema `private`, nunca exposto pela Data API). `public.dashboard_stats` virou um wrapper fino que só checa membership antes de chamar a função privada; `public.public_demo_stats()` é outro wrapper, liberado para `anon`/`authenticated`, que localiza a organização fixa marcada `settings.is_public_demo = true` e chama a mesma função privada com uma janela fixa de 90 dias.
+- **Consequência:** um único lugar calcula os KPIs — corrigir um gráfico corrige os dois painéis. O caminho público nunca recebe `organization_id` do chamador: sempre resolve a organização de demonstração internamente, então não há como um visitante anônimo pedir dados de outra organização.
+
+## D-024 · Gerador de dados de demonstração: SQL puro, ~800 sessões realistas
+- **Contexto:** a demo pública e o botão "Gerar dados de demonstração" (novas contas) precisam de massa de dados que preencha todos os gráficos do painel de forma plausível — funil com abandono real, distribuição geográfica, sinais de risco no catálogo real, sessões decididas com auditoria.
+- **Decisão:** `private.seed_demo_core(...)` gera tudo em cadeias de CTE materializadas numa tabela temporária (`_seed`): estágio do funil (nunca aberto/sem câmera/negado/abandonado/enviado), faixa de risco e decisão por distribuição de probabilidade, timestamps derivados (link → sessão → envio → decisão), depois insere em `verification_links`, `subjects`, `verification_sessions`, `session_events`, `consents`, `risk_signals` (usando os pesos reais de `private.signal_catalog()`, nunca uma escala inventada) e `audit_logs`. `public.seed_demo_data(org)` é o wrapper autenticado: só o proprietário pode chamar, e só em organização "vazia" (≤10 sessões reais) — protege contra apagar/misturar dados de uma conta em produção.
+- **Consequência:** os parâmetros de sessão/taxa de fraude/UFs estão fixos no wrapper (800 sessões, 9% fraude, SP/RJ/MG/BA/PR) em vez de ler o `seedProfile` já definido em `src/config/niches/*.ts`. É uma simplificação deliberada para a primeira entrega — o `seedProfile` por nicho fica pronto para uma iteração futura que passe esses valores como parâmetro em vez de constante.
+
+## D-025 · Organização de demonstração pública é fixa e criada uma única vez
+- **Decisão:** um bloco `do $$...$$` idempotente (verifica `settings->>'is_public_demo' = 'true'` antes de fazer qualquer coisa) cria a organização "Aurora Digital" com um `auth.users.id` fixo (`00000000-0000-4000-9000-00000000d001`) via `INSERT` direto nas tabelas — não pela RPC `create_organization` — porque o bloco corre com o papel já privilegiado da migração, sem precisar simular `auth.uid()`/JWT. Essa organização nunca aparece para nenhum usuário real: ela só existe para alimentar `public_demo_stats()`.
+- **Consequência:** a migração pode rodar de novo (idempotente) sem duplicar a organização pública nem re-semear 800 sessões a cada deploy.
+
+## D-026 · LGPD: direitos do titular por CPF + OTP, sem exigir login
+- **Contexto:** o titular (não é usuário do painel) precisa poder pedir acesso ou exclusão dos próprios dados, mas o CPF é hasheado por organização (D-014/submit) — não existe um hash global para buscar direto.
+- **Decisão:** `public.create_data_request(cpf, email, nome, tipo)` percorre todas as organizações calculando o hash equivalente em cada uma (`private.find_subjects_by_cpf`) e grava o pedido em `data_requests` (RLS ativado, sem policy para `anon`/`authenticated` — só alcançável pelas RPCs `security definer`). Um código de 6 dígitos, hasheado, expira em 10 minutos, permite 5 tentativas e 5 pedidos/24h por CPF. `verify_data_request` confirma o código e, para exclusão, marca a mídia associada para o próximo ciclo do cron (`delete_after = now() - interval '1 second'`), anonimiza o titular (nome, dados, revoga opt-in de marketing) e grava em `audit_logs` — nunca faz `DELETE` direto pela RPC (a remoção do arquivo em si é responsabilidade do cron do Worker, que tem a chave de serviço do Storage).
+- **Limitação assumida (modo demonstração):** sem um provedor de e-mail configurado (Resend/SMTP — ver seção "Fora de escopo"), o código de verificação volta na própria resposta da API em vez de ser enviado por e-mail, com o rótulo "modo demonstração" explícito na tela. Em produção (`APP_MODE=live` + Resend), o Worker consumiria esse valor internamente e nunca o devolveria ao chamador.
+
+## D-027 · Retenção automática: mídia e links vencidos, apagados pelo cron do Worker
+- **Decisão:** `list_expired_media()`/`purge_media_records(ids)`/`expire_stale_links()` são `security definer`, liberadas só para `service_role` — nunca para `anon`/`authenticated`. O cron do Worker (`scheduled()`) chama `list_expired_media()` com a chave secreta, apaga cada objeto correspondente no Storage via REST, confirma com `purge_media_records`, e chama `expire_stale_links()` para marcar links vencidos. A separação entre "marcar para apagar" (SQL, imediato) e "apagar de fato" (Worker, no próximo ciclo do cron) existe porque só o Worker tem a chave de serviço do Storage — o Postgres não consegue apagar objetos do bucket por si só.
+
+## D-028 · "Simular onboarding" público sem se autenticar
+- **Contexto:** a demo pública precisa deixar qualquer visitante ver a tela do titular sem sair da página — mas `create_verification_link` exige papel de proprietário/analista na organização.
+- **Decisão:** `public.start_public_demo_flow()` é uma RPC dedicada, liberada para `anon`, que sempre resolve a organização de demonstração fixa internamente (nunca aceita `organization_id` do chamador) e cria um link de 30 minutos com uma referência fixa (`'Simulação pública'`) usada só para limitar a 200 criações por hora contra abuso — sem tocar no limite diário de 500 links/organização usado pelo fluxo autenticado. O front abre esse link numa moldura de celular (`<iframe>` para `/v/:token`, com `allow="camera"`) dentro de um modal na própria página `/demo`, sem navegar para outra aba.
+- **Consequência:** a mesma tela do titular (`SubjectLinkPage`) funciona sem alteração dentro do iframe — `document.title`/`document.documentElement.dataset.theme` só afetam o documento do iframe. Cada simulação é uma sessão descartável que nunca aparece em nenhum painel autenticado.
+
+## D-029 · Conta demo pula o wizard de marca/equipe
+- **Decisão:** quando o cadastro vem do botão "Criar conta demo" (marcado em `localStorage` antes do cadastro, já que o trajeto cadastro → confirmação de e-mail → onboarding pode passar por páginas diferentes e perderia o estado da rota), o `OnboardingPage`, depois de `create_organization`, chama `seed_demo_data` e vai direto para o painel (`/app`) em vez do wizard de marca (`/app/configurar/marca`). Uma conta criada sem essa intenção segue o fluxo normal, inalterado.
+- **Consequência:** quem quer só explorar o produto chega num painel populado em segundos; quem quer configurar a própria marca não é afetado.
+
+## D-030 · Relatório mensal em PDF: gerado no navegador, sem servidor, sob demanda
+- **Contexto:** §5.8 pede um relatório mensal em PDF com a marca da organização, indicadores, funil, fraude por tipo e recomendações — sem back-end próprio (o projeto não tem servidor de aplicação, só Supabase + um Worker fino).
+- **Decisão:** `@react-pdf/renderer` desenha o PDF inteiramente no navegador, a partir dos mesmos dados já carregados pelo `useDashboard()` — nenhuma chamada extra à rede. `MonthlyReportPdf.tsx` é uma árvore de renderização própria (`Document`/`Page`/`View`/`Text`), separada do DOM, então formatadores (`fmtInt`/`fmtPct`/`fmtBrl`/`fmtDuration`) e rótulos de tipo de fraude são duplicados ali em vez de importados de `charts.tsx`/`i18n` — `@react-pdf/renderer` não sabe renderizar componentes React do DOM nem usar `useTranslation()` fora de um `I18nextProvider` próprio, e duplicar algumas constantes pequenas é mais simples do que criar esse provider só para o PDF. As recomendações (`buildRecommendations`) são heurísticas sobre os números do próprio período (taxa de negativa de câmera, conclusão do funil, aprovação automática, concentração em faixas de risco altas, tempo médio, qualificados zerados) — nunca texto fixo — e caem para uma mensagem neutra quando nenhum limiar é cruzado. O botão "Baixar relatório PDF" (`OverviewPage.tsx`) importa `downloadMonthlyReport` com `import()` dinâmico, não estático: `@react-pdf/renderer` é pesado (~450 kB gzip) e só deve entrar no bundle de quem realmente clica em baixar — sem isso, o chunk do painel principal quase triplicava de tamanho para todo visitante.
+- **Consequência:** o relatório funciona offline/sem custo de servidor e herda a marca (logo, cor primária) via `resolveBrand()`, igual às outras telas white-label. Limitação assumida: sem registro de fonte customizada no `@react-pdf/renderer` (só Helvetica padrão) — a tipografia da marca (`font_display`/`font_text`) não chega ao PDF, só a cor.
+
+## D-031 · Acessibilidade: varredura automatizada (axe-core) + revisão de teclado, sem dependência nova no repositório
+- **Contexto:** §12.10 pede atenção a acessibilidade como parte do acabamento, além dos testes de RLS/fluxo/regras já cobertos por `supabase/tests/`.
+- **Decisão:** a varredura rodou com `axe-core` (WCAG 2 A/AA) via Playwright contra o build de produção (`vite preview`), cobrindo 12 telas — públicas (landing, entrar, criar conta, `/demo`, `/privacidade`, fluxo do titular `/v/:token`) e autenticadas (painel, revisão, detalhe de sessão, clientes qualificados, auditoria, configurações) — em claro e escuro, desktop e mobile: **zero violações** em todas. A revisão manual de teclado no `GuidedTour` (tour guiado do painel público) encontrou uma lacuna real: o componente já era `role="dialog" aria-modal="true"`, mas não prendia o foco nem fechava com Esc — diferente do `Modal.tsx` genérico, que já fazia isso desde fases anteriores. Corrigido replicando o mesmo padrão do `Modal` (foco inicial, `Tab`/`Shift+Tab` prendem entre os controles do tour, `Esc` fecha e devolve o foco a quem abriu). A ferramenta de varredura (`axe-core`, via `npm install --no-save` num diretório fora do repositório) não entrou como dependência do projeto — é uma verificação pontual de acabamento, não um teste que precise rodar em CI a cada commit.
+- **Consequência:** o app inteiro passa numa varredura WCAG 2 AA automatizada nas configurações testadas; o único problema real encontrado (foco não preso no tour guiado) foi corrigido. `package.json` não ganhou peso extra por isso — quem quiser repetir a varredura decide se vale adicionar a ferramenta como dependência de desenvolvimento.
+
+## D-032 · Cabeçalhos de segurança do Worker: `frame-ancestors`/`X-Frame-Options` por rota, não globais
+- **Contexto:** revisão de segurança pós-Fase 10 encontrou um bug real: `SECURITY_HEADERS` aplicava `X-Frame-Options: DENY` e `frame-ancestors 'none'` em **toda** resposta do Worker, sem exceção — inclusive `/veroid/v/:token`. Como o `SimulateOnboardingModal` (D-028) embute exatamente essa rota num `<iframe>` same-origin dentro de `/demo`, essa combinação bloquearia a própria demo pública em produção — algo que os testes anteriores não pegaram porque rodaram contra `vite preview` (que não aplica os headers do Worker), nunca contra o `fetch()` do Worker de fato.
+- **Decisão:** `securityHeaders(path)` decide por rota: `frame-ancestors 'self'` / `X-Frame-Options: SAMEORIGIN` só para `/v/:token` (a única página feita para ser embutida, e só pelo próprio domínio); todo o resto — painel autenticado, landing, `/demo`, `/privacidade` — mantém `frame-ancestors 'none'` / `DENY`, proteção máxima contra clickjacking. `frame-src` da CSP ganhou `'self'` (além do Turnstile) pelo mesmo motivo: sem isso, a página que abre o iframe (`/demo`) também estaria proibida de carregá-lo. Aproveitei para adicionar `object-src 'none'`.
+- **Consequência:** a demo pública funciona no deploy real, não só no ambiente de desenvolvimento. Nenhuma outra rota perde proteção contra clickjacking — a exceção é a menor possível (uma rota, um único valor a mais que `'none'`).
+
+## D-033 · Assinatura do webhook do CRM: chave de serviço, nunca a chave pública
+- **Contexto:** a mesma revisão encontrou que `handleWebhook` (D-022) assinava o payload com HMAC usando `SUPABASE_PUBLISHABLE_KEY` como segredo — mas essa chave é pública por design (vai no bundle do front, `VITE_SUPABASE_PUBLISHABLE_KEY`). Qualquer pessoa com o `organization_id` (visível a quem tem acesso à organização, e não tratado como segredo) conseguiria calcular sozinha uma assinatura "válida" — a verificação no CRM não provava nada sobre a origem da chamada, o oposto do que D-022 dizia entregar.
+- **Decisão:** a assinatura passou a usar `SUPABASE_SECRET_KEY` (a chave de serviço, só existe como `wrangler secret`, nunca chega a um navegador) como material do HMAC — usada apenas para derivar bytes de assinatura, nunca enviada a lugar nenhum nem usada para consultar o Supabase (a leitura dos dados continua só com o JWT do usuário, RLS se aplica — D-022 não mudou nesse ponto). Sem `SUPABASE_SECRET_KEY` configurada, o endpoint recusa explicitamente (`webhook_signing_not_configured`) em vez de assinar com uma chave fraca.
+- **Consequência:** um CRM que valida `x-veroid-signature` agora tem uma garantia real de origem — forjar a assinatura exigiria conhecer a chave de serviço, nunca exposta a um cliente. Em qualquer deploy real, `SUPABASE_SECRET_KEY` já é obrigatória para o Copiloto e para a retenção automática (D-027), então essa exigência não adiciona nenhuma configuração nova.

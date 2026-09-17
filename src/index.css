@@ -1,0 +1,93 @@
+@import "tailwindcss";
+@import "./styles/tokens.css";
+
+@theme inline {
+  --font-display: var(--font-display);
+  --font-sans: var(--font-text);
+
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+  --color-primary: var(--brand-primary);
+  --color-accent: var(--brand-accent);
+
+  --color-surface: var(--surface);
+  --color-page: var(--surface-page);
+  --color-raised: var(--surface-raised);
+  --color-sunken: var(--surface-sunken);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-divider: var(--divider);
+  --color-ink: var(--ink);
+  --color-body: var(--ink-body);
+  --color-muted: var(--ink-muted);
+  --color-subtle: var(--ink-subtle);
+  --color-link: var(--link);
+
+  --color-low: var(--risk-low);
+  --color-low-bg: var(--risk-low-bg);
+  --color-low-ink: var(--risk-low-ink);
+  --color-review: var(--risk-review);
+  --color-review-bg: var(--risk-review-bg);
+  --color-review-ink: var(--risk-review-ink);
+  --color-high: var(--risk-high);
+  --color-high-bg: var(--risk-high-bg);
+  --color-high-ink: var(--risk-high-ink);
+  --color-unknown: var(--risk-unknown);
+  --color-unknown-bg: var(--risk-unknown-bg);
+  --color-unknown-ink: var(--risk-unknown-ink);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+
+  --shadow-raised: var(--shadow-raised);
+  --shadow-overlay: var(--shadow-overlay);
+  --shadow-modal: var(--shadow-modal);
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--surface-page);
+    color: var(--ink-body);
+    font-family: var(--font-text);
+    font-size: 14px;
+    line-height: 22px;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--font-display); color: var(--ink); margin: 0; }
+  :focus-visible {
+    outline: var(--focus-width) solid var(--focus-ring);
+    outline-offset: var(--focus-offset);
+  }
+  ::selection { background: var(--brand-100); color: var(--n-900); }
+}
+
+@layer utilities {
+  .tabular { font-variant-numeric: tabular-nums; }
+  .t-display { font: 700 44px/44px var(--font-display); letter-spacing: -0.032em; }
+  .t-h1 { font: 700 32px/35px var(--font-display); letter-spacing: -0.028em; }
+  .t-h2 { font: 700 28px/32px var(--font-display); letter-spacing: -0.025em; }
+  .t-h3 { font: 600 24px/28px var(--font-display); letter-spacing: -0.022em; }
+  .t-h4 { font: 600 19px/25px var(--font-text); }
+  .t-body-lg { font: 400 16px/26px var(--font-text); }
+  .t-body { font: 400 14px/22px var(--font-text); }
+  .t-label { font: 500 13px/18px var(--font-text); }
+  .t-caption { font: 400 12px/18px var(--font-text); }
+  .t-overline { font: 600 11px/13px var(--font-text); letter-spacing: .1em; text-transform: uppercase; }
+  .t-micro { font: 400 10px/14px var(--font-text); }
+  .sr-only-focusable:not(:focus) {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .enter { animation: enter var(--dur-base) var(--ease-in) both; }
+  @keyframes enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+}

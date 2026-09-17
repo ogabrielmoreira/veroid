@@ -1,0 +1,105 @@
+/* Vero ID — Design System v0.1 (§8). Tokens de marca são sobrescritos por tenant. */
+:root {
+  /* brand — sobrescrito por tenant */
+  --brand-50:#F0F2FB; --brand-100:#DDE1F6; --brand-200:#BCC3EE;
+  --brand-300:#939EE2; --brand-400:#6C79D4; --brand-500:#4756C9;
+  --brand-600:#3742A8; --brand-700:#2B3486; --brand-800:#232C6B;
+  --brand-900:#171D46;
+  --brand-primary:var(--brand-primary-light, var(--brand-800)); --brand-accent:var(--brand-accent-light, var(--brand-500));
+  --brand-primary-hover:var(--brand-600);
+  --brand-on-primary:#FFFFFF;
+
+  /* neutral */
+  --n-50:#F5F6FA; --n-100:#EBEDF4; --n-200:#D7DAE8; --n-300:#B6BBD0;
+  --n-400:#9198B5; --n-500:#6A7192; --n-600:#4E5573; --n-700:#3C4262;
+  --n-800:#262C45; --n-900:#10142B;
+
+  /* superfícies semânticas do painel (light) */
+  --surface:#FFFFFF; --surface-page:var(--n-50); --surface-raised:#FFFFFF; --surface-sunken:var(--n-50);
+  --border:var(--n-200); --border-strong:var(--n-300); --divider:var(--n-100);
+  --ink:var(--n-900); --ink-body:var(--n-700); --ink-muted:var(--n-600); --ink-subtle:var(--n-500);
+  --link:var(--brand-700);
+  --input-bg:#FFFFFF; --input-border:var(--n-300);
+
+  /* semantic — nunca sobrescrito */
+  --risk-low:#0F7A4A;     --risk-low-bg:#E6F2EB;     --risk-low-ink:#0B5C37;
+  --risk-review:#B06A00;  --risk-review-bg:#FBF0DF;  --risk-review-ink:#7A4900;
+  --risk-high:#B3261E;    --risk-high-bg:#FBE9E7;    --risk-high-ink:#8C1D18;
+  --risk-unknown:#5A6570; --risk-unknown-bg:#EEF0F2; --risk-unknown-ink:#3D464F;
+
+  /* type */
+  --font-display:'Libre Franklin', system-ui, sans-serif;
+  --font-text:'Geist', system-ui, sans-serif;
+
+  /* shape */
+  --radius-sm:4px; --radius-md:6px; --radius-lg:12px; --radius-pill:999px;
+
+  /* elevation */
+  --shadow-raised:0 1px 2px rgba(16,20,43,.08);
+  --shadow-overlay:0 4px 14px rgba(16,20,43,.1);
+  --shadow-modal:0 14px 36px rgba(16,20,43,.16);
+  --scrim:rgba(16,20,43,.48);
+
+  /* focus */
+  --focus-ring:var(--brand-500); --focus-width:2px; --focus-offset:2px;
+
+  /* motion */
+  --dur-instant:80ms; --dur-fast:160ms; --dur-base:240ms; --dur-slow:400ms;
+  --ease-in:cubic-bezier(.2,.8,.3,1); --ease-out:cubic-bezier(.4,0,1,1);
+
+  /* layout */
+  --content-max:1240px; --flow-max:520px;
+  --target-desktop:40px; --target-mobile:44px;
+
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-instant:0ms; --dur-fast:0ms; --dur-base:0ms; --dur-slow:0ms; }
+}
+
+/* Dark mode — só painel admin (§2.4). O fluxo do titular força light. */
+[data-theme="dark"] {
+  --brand-primary:var(--brand-300);
+  --brand-primary-hover:var(--brand-200);
+  --brand-on-primary:#10142B;
+  --surface:#0C1024; --surface-page:#0C1024; --surface-raised:#151A33; --surface-sunken:#0C1024;
+  --border:#262C45; --border-strong:#4E5573; --divider:#1C2140;
+  --ink:#EDEFF7; --ink-body:#D7DAE8; --ink-muted:#B6BBD0; --ink-subtle:#9198B5;
+  --link:var(--brand-300);
+  --input-bg:#0C1024; --input-border:#4E5573;
+  --focus-ring:var(--brand-300);
+  --risk-low-bg:rgba(15,122,74,.18);    --risk-low-ink:#7FDCAE;
+  --risk-review-bg:rgba(176,106,0,.18); --risk-review-ink:#F0C077;
+  --risk-high-bg:rgba(179,38,30,.16);   --risk-high-ink:#FFB4AC;
+  --risk-unknown-bg:rgba(90,101,112,.22); --risk-unknown-ink:#C9D0D6;
+  color-scheme: dark;
+}
+
+/* Escopo de marca do tenant: re-declara os tokens derivados para que a escala
+   injetada via style="" no wrapper seja resolvida aqui (custom properties resolvem onde são declaradas). */
+.brand-scope {
+  --brand-primary:var(--brand-primary-light, var(--brand-800));
+  --brand-accent:var(--brand-accent-light, var(--brand-500));
+  --brand-primary-hover:color-mix(in oklab, var(--brand-primary) 84%, black);
+  --focus-ring:var(--brand-500);
+  --link:var(--brand-700);
+  font-family:var(--font-text);
+}
+[data-theme="dark"] .brand-scope, .brand-scope[data-theme="dark"] {
+  --brand-primary:var(--brand-300);
+  --brand-primary-hover:var(--brand-200);
+  --focus-ring:var(--brand-300);
+  --link:var(--brand-300);
+}
+.brand-scope h1, .brand-scope h2, .brand-scope h3, .brand-scope .font-display { font-family:var(--font-display); }
+
+/* Gráficos (§7): categórico validado (5 slots, pares adjacentes) — nunca cores de risco para série */
+:root {
+  --series-1:#2a78d6; --series-2:#eb6834; --series-3:#1baf7a; --series-4:#eda100; --series-5:#e87ba4;
+  --chart-grid:#EBEDF4; --chart-axis:#6A7192; --chart-surface:#FFFFFF;
+}
+[data-theme="dark"] {
+  --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70; --series-4:#c98500; --series-5:#d55181;
+  --chart-grid:#262C45; --chart-axis:#9198B5; --chart-surface:#151A33;
+}

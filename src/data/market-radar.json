@@ -1,0 +1,11 @@
+{
+  "_note": "JSON curado (§5.5). Dados de mercado nunca são gerados em tempo real. Revise fontes e datas antes de publicar.",
+  "items": [
+    { "id": "mapa-fraude-2026", "niches": ["fintech", "credit", "agro", "automotive", "*"], "value": "2,86 mi", "text_pt": "tentativas de fraude de identidade barradas no 1º semestre de 2026 (+32,9% a/a), com surgimento do \"golpe do sósia\"", "text_en": "identity fraud attempts blocked in H1 2026 (+32.9% YoY), including the rise of the \"look-alike scam\"", "source": "Serasa Experian — Mapa da Fraude", "date": "2026-07", "url": "https://www.serasaexperian.com.br/" },
+    { "id": "credito-rural-48h", "niches": ["agro"], "value": "< 48h", "text_pt": "prazo de análise no crédito rural com biometria + CPR digital, antes de 15 a 45 dias; desde abr/2026 bancos cruzam dados de desmatamento", "text_en": "rural credit review time with biometrics + digital CPR, down from 15–45 days; since Apr/2026 banks cross-check deforestation data", "source": "Brief de mercado do produto (agronegócio)", "date": "2026-04", "url": "https://www.bcb.gov.br/" },
+    { "id": "clonagem-veiculos", "niches": ["automotive"], "value": "+37%", "text_pt": "crescimento da clonagem de veículos em 2025", "text_en": "growth in vehicle cloning in 2025", "source": "Brief de mercado do produto (automotivo)", "date": "2025-12", "url": "https://www.gov.br/senatran/" },
+    { "id": "plaid-deepfake", "niches": ["fintech", "credit", "*"], "value": "jul/2026", "text_pt": "Plaid lança detecção de deepfake na abertura de contas", "text_en": "Plaid launches deepfake detection for account opening", "source": "Plaid", "date": "2026-07", "url": "https://plaid.com/" },
+    { "id": "visa-biocatch", "niches": ["fintech", "credit", "*"], "value": "ago/2026", "text_pt": "Visa compra a BioCatch, de biometria comportamental", "text_en": "Visa acquires behavioral biometrics company BioCatch", "source": "Visa", "date": "2026-08", "url": "https://usa.visa.com/" },
+    { "id": "recomendacao-camadas", "niches": ["*"], "value": "4 camadas", "text_pt": "recomendação: combinar biometria com documento, prova de vida, dados cadastrais e dispositivo", "text_en": "recommendation: combine biometrics with document, liveness, registry data and device", "source": "Serasa Experian — Mapa da Fraude", "date": "2026-07", "url": "https://www.serasaexperian.com.br/" }
+  ]
+}
