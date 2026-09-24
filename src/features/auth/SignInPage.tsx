@@ -11,14 +11,12 @@ import { authErrorMessage } from '@/lib/authErrors'
 import { appUrl, env } from '@/lib/env'
 import { supabase } from '@/lib/supabase'
 import { AuthLayout } from './AuthLayout'
-import { useAuth } from './AuthProvider'
 
 export function SignInPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
   const from = (location.state as { from?: string } | null)?.from ?? '/app'
-  const { setPendingOtp } = useAuth()
   const [serverError, setServerError] = useState<string | null>(null)
 
   const schema = z.object({
@@ -35,15 +33,9 @@ export function SignInPage() {
 
   const onSubmit = async ({ email, password }: Values) => {
     setServerError(null)
-    // Marca o login como pendente ANTES de autenticar: o Supabase emite SIGNED_IN já no
-    // signInWithPassword, e sem isso o RequireGuest levaria para /app e desmontaria esta
-    // tela antes do pedido do código — o e-mail com o token nunca era enviado (§5.1).
-    if (env.loginEmailOtp) setPendingOtp(true)
-
     const { error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
-      setPendingOtp(false)
       if (error.code === 'email_not_confirmed' || /not confirmed/i.test(error.message)) {
         await supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: appUrl('/auth/callback') } })
         return navigate('/verificar', { state: { email, mode: 'signup', notice: 'emailNotConfirmed' } })
@@ -54,14 +46,8 @@ export function SignInPage() {
     if (env.loginEmailOtp) {
       // 2º fator por e-mail: senha confere → encerra a sessão local e exige o código (§5.1)
       await supabase.auth.signOut({ scope: 'local' })
-      const { error: otpError } = await supabase.auth.signInWithOtp({
-        email,
-        options: { shouldCreateUser: false, emailRedirectTo: appUrl('/auth/callback') },
-      })
-      if (otpError) {
-        setPendingOtp(false)
-        return setServerError(authErrorMessage(otpError, t))
-      }
+      const { error: otpError } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } })
+      if (otpError) return setServerError(authErrorMessage(otpError, t))
       return navigate('/verificar', { state: { email, mode: 'login', from } })
     }
 

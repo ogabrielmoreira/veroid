@@ -176,7 +176,7 @@
     "signup": {
       "title": "Criar conta demo",
       "subtitle": "Grátis. Sem cartão. Os dados de demonstração são apagados em 24h.",
-      "submit": "Criar conta e receber código",
+      "submit": "Criar conta e confirmar por e-mail",
       "hasAccount": "Já tem conta?",
       "toSignin": "Entrar",
       "terms": "Li e aceito os termos de uso da demonstração e o aviso de privacidade.",
@@ -184,10 +184,9 @@
     },
     "verify": {
       "title": "Confirme seu e-mail",
-      "subtitle": "Enviamos uma mensagem para {{email}}. Digite o código de 6 dígitos ou toque no link do e-mail.",
-      "subtitleLogin": "Enviamos um código de 6 dígitos para {{email}}. Ele vale por 10 minutos.",
-      "codeLabel": "Código de verificação",
-      "submit": "Confirmar código",
+      "subtitle": "Enviamos um link de confirmação para {{email}}. Abra o e-mail neste dispositivo e toque no link para continuar.",
+      "subtitleLogin": "Enviamos um link de acesso para {{email}}. Abra o e-mail neste dispositivo e toque no link para entrar. Ele vale por 10 minutos.",
+      "waitingHint": "Esta tela atualiza sozinha assim que você confirmar pelo link.",
       "resend": "Reenviar e-mail",
       "resendIn": "Reenviar em {{seconds}}s",
       "resent": "Enviamos um novo e-mail.",
@@ -235,7 +234,6 @@
       "nameRequired": "Digite seu nome completo, como aparece no documento.",
       "emailInvalid": "E-mail incompleto. Confira se tem @ e domínio, como nome@empresa.com.",
       "passwordShort": "Senha curta. Use pelo menos 8 caracteres.",
-      "codeInvalid": "O código tem 6 números. Confira no e-mail e digite de novo.",
       "summary": "Corrija {{count}} campo(s) para continuar:"
     },
     "illustration": {

@@ -1,8 +1,27 @@
-# Deploy em gabrielmoreira.tech/veroid
+# Deploy
 
-O portfólio continua no GitHub Pages. Só o caminho `/veroid*` é atendido por um Cloudflare Worker (plano gratuito).
+## Deploy atual: GitHub Pages standalone
+O app está publicado em `https://ogabrielmoreira.github.io/veroid/`, num repositório `veroid` próprio (fora do repositório do portfólio) — não pelo Worker descrito abaixo.
 
-## Pré-requisitos (uma vez)
+```bash
+npm install
+cp .env.example .env.local     # preencha a chave publishable
+npm run build
+cp dist/veroid/index.html dist/veroid/404.html   # fallback de SPA (React Router) no GitHub Pages
+touch dist/veroid/.nojekyll
+npx gh-pages -d dist/veroid    # publica em gh-pages; Settings → Pages → Source = "Deploy from a branch"
+```
+
+**Checklist pós-deploy (GitHub Pages):**
+- [ ] `https://ogabrielmoreira.github.io/veroid/` carrega, e F5 em `/veroid/entrar` também (fallback de SPA)
+- [ ] Supabase → Authentication → URL Configuration: **Site URL** e **Redirect URLs** apontam para `https://ogabrielmoreira.github.io/veroid` (não para `gabrielmoreira.tech/veroid` — domínio do plano original abaixo, nunca usado). Ver D-035 no DECISIONS.md: um link de confirmação de e-mail para o domínio errado 404. Se o domínio de publicação mudar de novo, esta tela precisa ser atualizada manualmente — nenhuma migração cobre isso.
+- [ ] Cadastro → e-mail chega → link de confirmação abre `/veroid/auth/callback` e entra no app
+- [ ] Sem SMTP próprio configurado no Supabase (plano Free usa o e-mail padrão deles, com limite baixo) — ver "Limitações conhecidas" no README
+
+## Alternativa: Worker em gabrielmoreira.tech/veroid
+Caminho original — só o caminho `/veroid*` do portfólio (GitHub Pages) atendido por um Cloudflare Worker (plano gratuito). Não é o deploy em uso hoje; documentado aqui caso o app seja linkado de volta ao domínio do portfólio no futuro.
+
+### Pré-requisitos (uma vez)
 1. Cloudflare → DNS do `gabrielmoreira.tech`: os registros do domínio raiz (A/CNAME para o GitHub Pages) precisam estar **Proxied** (nuvem laranja). Em SSL/TLS, use **Full**.
 2. `npx wrangler login`
 
@@ -33,12 +52,3 @@ npx wrangler secret put RESEND_API_KEY
 - [ ] Cadastro → e-mail chega → link abre `/veroid/auth/callback` e entra no app
 - [ ] Criar organização → aparece `organization.created` em Atividade recente
 - [ ] Rotas fora de `/veroid` continuam servindo o portfólio
-
-## Vitrine estática no GitHub Pages
-Espelho só-front do app em `ogabrielmoreira.github.io/veroid/` — o caminho do Pages coincide com o `BASE_PATH` `/veroid/`, então o build sai pronto, sem reescrita.
-
-Em **Settings → Pages → Source**, escolha **GitHub Actions** (não "Deploy from a branch"). O workflow `.github/workflows/pages.yml` roda a cada push em `main`: build, cópia de `index.html` para `404.html` (fallback de SPA) e publicação.
-
-Limites em relação ao deploy no Workers:
-- `/veroid/api/*` não existe — a reanálise com Claude Vision na tela de sessão falha; o fluxo do titular cai no sinal "IA não executada (modo local)".
-- `public/_headers` é ignorado pelo Pages: sem `Permissions-Policy` próprio. A câmera segue liberada (https, mesma origem).

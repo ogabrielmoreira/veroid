@@ -2,7 +2,7 @@
 
 Plataforma white-label de **KYC, prova de vida e qualificação de clientes**, multi-nicho (B2B2C). Protótipo funcional de portfólio.
 
-Feito por **Gabriel Moreira** · [@GabrielTechDesign](https://gabrielmoreira.tech) · 
+Feito por **Gabriel Moreira** · [@GabrielTechDesign](https://gabrielmoreira.tech) · Demo: `https://gabrielmoreira.tech/veroid`
 
 > **Protótipo de demonstração.** A detecção usa visão computacional e IA generativa e não substitui prova de vida certificada (ISO/IEC 30107-3).
 

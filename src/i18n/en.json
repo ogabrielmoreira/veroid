@@ -176,7 +176,7 @@
     "signup": {
       "title": "Create demo account",
       "subtitle": "Free. No card. Demo data is deleted after 24h.",
-      "submit": "Create account and get code",
+      "submit": "Create account and confirm by email",
       "hasAccount": "Already have an account?",
       "toSignin": "Sign in",
       "terms": "I have read and accept the demo terms of use and privacy notice.",
@@ -184,10 +184,9 @@
     },
     "verify": {
       "title": "Confirm your email",
-      "subtitle": "We sent a message to {{email}}. Enter the 6-digit code or tap the link in the email.",
-      "subtitleLogin": "We sent a 6-digit code to {{email}}. It is valid for 10 minutes.",
-      "codeLabel": "Verification code",
-      "submit": "Confirm code",
+      "subtitle": "We sent a confirmation link to {{email}}. Open the email on this device and tap the link to continue.",
+      "subtitleLogin": "We sent a sign-in link to {{email}}. Open the email on this device and tap the link to continue. It is valid for 10 minutes.",
+      "waitingHint": "This screen updates on its own once you confirm through the link.",
       "resend": "Resend email",
       "resendIn": "Resend in {{seconds}}s",
       "resent": "We sent a new email.",
@@ -235,7 +234,6 @@
       "nameRequired": "Enter your full name as it appears on your ID.",
       "emailInvalid": "Incomplete email. Check it has an @ and a domain, like name@company.com.",
       "passwordShort": "Password too short. Use at least 8 characters.",
-      "codeInvalid": "The code has 6 digits. Check the email and enter it again.",
       "summary": "Fix {{count}} field(s) to continue:"
     },
     "illustration": {

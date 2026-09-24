@@ -8,9 +8,6 @@ interface AuthState {
   loading: boolean
   recovery: boolean
   clearRecovery: () => void
-  /** Login com senha aprovado, aguardando o código enviado por e-mail (§5.1). */
-  pendingOtp: boolean
-  setPendingOtp: (value: boolean) => void
 }
 
 const AuthContext = createContext<AuthState | null>(null)
@@ -19,7 +16,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const [recovery, setRecovery] = useState(false)
-  const [pendingOtp, setPendingOtp] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -40,16 +36,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const value = useMemo<AuthState>(
-    () => ({
-      session,
-      user: session?.user ?? null,
-      loading,
-      recovery,
-      clearRecovery: () => setRecovery(false),
-      pendingOtp,
-      setPendingOtp,
-    }),
-    [session, loading, recovery, pendingOtp],
+    () => ({ session, user: session?.user ?? null, loading, recovery, clearRecovery: () => setRecovery(false) }),
+    [session, loading, recovery],
   )
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

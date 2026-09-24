@@ -1,15 +1,14 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router'
 import { Alert } from '@/components/ui/Alert'
 import { Button } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
-import { OtpInput } from '@/components/ui/OtpInput'
 import { authErrorMessage } from '@/lib/authErrors'
 import { appUrl } from '@/lib/env'
 import { supabase } from '@/lib/supabase'
-import { AuthLayout } from './AuthLayout'
 import { useAuth } from './AuthProvider'
+import { AuthLayout } from './AuthLayout'
 
 type Mode = 'signup' | 'login'
 interface VerifyState { email?: string; mode?: Mode; from?: string; notice?: string }
@@ -19,15 +18,13 @@ const RESEND_COOLDOWN = 60
 export function VerifyPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { user } = useAuth()
   const state = (useLocation().state ?? {}) as VerifyState
   const email = state.email
   const mode: Mode = state.mode ?? 'signup'
-  const { setPendingOtp } = useAuth()
 
-  const [code, setCode] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [info, setInfo] = useState<string | null>(state.notice ? t(`errors.${state.notice}`) : null)
-  const [submitting, setSubmitting] = useState(false)
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN)
 
   useEffect(() => {
@@ -36,23 +33,16 @@ export function VerifyPage() {
     return () => window.clearTimeout(id)
   }, [cooldown])
 
-  // Sem e-mail no state (acesso direto ou recarga da página) não há 2º fator a concluir.
+  // O e-mail (template padrão do Supabase, sem SMTP próprio — ver DECISIONS.md) só traz um link,
+  // nunca o código em texto: não há como digitar um token que o usuário nunca vê. O cliente do
+  // Supabase sincroniza a sessão entre abas da mesma origem via localStorage, então quando o link
+  // é aberto em outra aba deste navegador, o `user` do AuthProvider muda aqui também — sem polling.
   useEffect(() => {
-    if (!email) setPendingOtp(false)
-  }, [email, setPendingOtp])
+    if (user) navigate(state.from ?? '/app', { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
 
   if (!email) return <Navigate to="/entrar" replace />
-
-  const verify = async (token: string) => {
-    if (!/^\d{6}$/.test(token)) return setError(t('auth.validation.codeInvalid'))
-    setError(null)
-    setSubmitting(true)
-    const { error: err } = await supabase.auth.verifyOtp({ email, token, type: 'email' })
-    setSubmitting(false)
-    if (err) return setError(authErrorMessage(err, t))
-    setPendingOtp(false)
-    navigate(state.from ?? '/app', { replace: true })
-  }
 
   const resend = async () => {
     setError(null)
@@ -60,18 +50,10 @@ export function VerifyPage() {
     const { error: err } =
       mode === 'signup'
         ? await supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: appUrl('/auth/callback') } })
-        : await supabase.auth.signInWithOtp({
-            email,
-            options: { shouldCreateUser: false, emailRedirectTo: appUrl('/auth/callback') },
-          })
+        : await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } })
     if (err) return setError(authErrorMessage(err, t))
     setInfo(t('auth.verify.resent'))
     setCooldown(RESEND_COOLDOWN)
-  }
-
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    void verify(code)
   }
 
   return (
@@ -90,24 +72,15 @@ export function VerifyPage() {
       </div>
       {error ? <Alert variant="error" live className="mb-5">{error}</Alert> : null}
       {info ? <Alert variant="info" live className="mb-5">{info}</Alert> : null}
-      <form noValidate onSubmit={onSubmit} className="flex flex-col gap-5">
-        <OtpInput
-          label={t('auth.verify.codeLabel')}
-          value={code}
-          onChange={(v) => { setCode(v); if (error) setError(null) }}
-          onComplete={(v) => void verify(v)}
-          disabled={submitting}
-        />
-        <Button type="submit" block loading={submitting} disabled={code.length !== 6 && !submitting}>
-          {t('auth.verify.submit')}
-        </Button>
+      <div className="flex flex-col gap-5">
+        <p className="m-0 t-caption text-[var(--ink-muted)]" aria-live="polite">{t('auth.verify.waitingHint')}</p>
         <div className="flex flex-col items-start gap-1">
           <Button variant="ghost" onClick={resend} disabled={cooldown > 0} className="-ml-3 disabled:bg-transparent disabled:border-0">
             <span className="tabular">{cooldown > 0 ? t('auth.verify.resendIn', { seconds: cooldown }) : t('auth.verify.resend')}</span>
           </Button>
           <p className="m-0 t-caption text-[var(--ink-muted)]">{t('auth.verify.spamHint')}</p>
         </div>
-      </form>
+      </div>
     </AuthLayout>
   )
 }
