@@ -9,6 +9,7 @@ import { authErrorMessage } from '@/lib/authErrors'
 import { appUrl } from '@/lib/env'
 import { supabase } from '@/lib/supabase'
 import { AuthLayout } from './AuthLayout'
+import { useAuth } from './AuthProvider'
 
 type Mode = 'signup' | 'login'
 interface VerifyState { email?: string; mode?: Mode; from?: string; notice?: string }
@@ -21,6 +22,7 @@ export function VerifyPage() {
   const state = (useLocation().state ?? {}) as VerifyState
   const email = state.email
   const mode: Mode = state.mode ?? 'signup'
+  const { setPendingOtp } = useAuth()
 
   const [code, setCode] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -34,6 +36,11 @@ export function VerifyPage() {
     return () => window.clearTimeout(id)
   }, [cooldown])
 
+  // Sem e-mail no state (acesso direto ou recarga da página) não há 2º fator a concluir.
+  useEffect(() => {
+    if (!email) setPendingOtp(false)
+  }, [email, setPendingOtp])
+
   if (!email) return <Navigate to="/entrar" replace />
 
   const verify = async (token: string) => {
@@ -43,6 +50,7 @@ export function VerifyPage() {
     const { error: err } = await supabase.auth.verifyOtp({ email, token, type: 'email' })
     setSubmitting(false)
     if (err) return setError(authErrorMessage(err, t))
+    setPendingOtp(false)
     navigate(state.from ?? '/app', { replace: true })
   }
 
@@ -52,7 +60,10 @@ export function VerifyPage() {
     const { error: err } =
       mode === 'signup'
         ? await supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: appUrl('/auth/callback') } })
-        : await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } })
+        : await supabase.auth.signInWithOtp({
+            email,
+            options: { shouldCreateUser: false, emailRedirectTo: appUrl('/auth/callback') },
+          })
     if (err) return setError(authErrorMessage(err, t))
     setInfo(t('auth.verify.resent'))
     setCooldown(RESEND_COOLDOWN)

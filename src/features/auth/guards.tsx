@@ -11,9 +11,11 @@ export function RequireAuth() {
 }
 
 export function RequireGuest() {
-  const { user, loading, recovery } = useAuth()
+  const { user, loading, recovery, pendingOtp } = useAuth()
   if (loading) return <FullPageLoader />
   if (recovery) return <Navigate to="/nova-senha" replace />
-  if (user) return <Navigate to="/app" replace />
+  // Durante o 2º fator por e-mail o Supabase emite SIGNED_IN assim que a senha confere.
+  // Sem esta exceção a tela de login seria desmontada antes de pedir o código (§5.1).
+  if (user && !pendingOtp) return <Navigate to="/app" replace />
   return <Outlet />
 }
