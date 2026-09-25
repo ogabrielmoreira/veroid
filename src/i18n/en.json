@@ -82,7 +82,6 @@
     "ctaSignin": "Already have an account?",
     "statValue": "2.86M",
     "statLabel": "identity fraud attempts blocked in H1 2026 in Brazil (+32.9% YoY)",
-    "statSource": "Source: Serasa Experian, Mapa da Fraude H1/2026",
     "pillars": {
       "consent": {
         "title": "Consent first",

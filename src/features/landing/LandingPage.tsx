@@ -77,7 +77,6 @@ export function LandingPage() {
                 </p>
                 <figcaption>
                   <p className="m-0 t-body text-[var(--ink-body)]">{t('landing.statLabel')}</p>
-                  <p className="m-0 mt-1 t-caption text-[var(--ink-muted)]">{t('landing.statSource')}</p>
                 </figcaption>
               </figure>
             </div>
