@@ -75,7 +75,6 @@
   },
   "honesty": "Protótipo de demonstração. A detecção usa visão computacional e IA generativa e não substitui prova de vida certificada (ISO/IEC 30107-3).",
   "landing": {
-    "eyebrow": "KYC white-label · prova de vida · LGPD",
     "title": "Confirme quem é quem, sem perder quem é cliente.",
     "lead": "Links de verificação com a marca da sua empresa, captura facial com prova de vida e um Copiloto Antifraude que explica cada decisão. Feito para fintech, crédito, agronegócio e automotivo.",
     "ctaSignup": "Criar conta demo",
@@ -99,7 +98,32 @@
       }
     },
     "caseLink": "Ver o case no portfólio",
-    "privacyLink": "Direitos do titular (LGPD)"
+    "privacyLink": "Direitos do titular (LGPD)",
+    "nav": {
+      "label": "Seções",
+      "identity": "Identidade",
+      "biometry": "Biometria",
+      "security": "Segurança"
+    },
+    "step": {
+      "current": "01",
+      "total": "05"
+    },
+    "heroAlt": "Pessoa usando óculos inteligentes durante uma verificação facial, com um mapa de biometria projetado ao lado.",
+    "corner": {
+      "tech": "Tecnologia que gera confiança",
+      "protection": "Mais proteção para o seu negócio",
+      "identity": "Identidade digital com segurança"
+    },
+    "hero": {
+      "analyzing": "Analisando sua identidade…",
+      "verifying": "Verificação em andamento",
+      "checklist": {
+        "liveness": "Prova de vida",
+        "biometrics": "Biometria facial",
+        "document": "Documento"
+      }
+    }
   },
   "demo": {
     "ctaCreate": "Criar minha conta",
@@ -121,11 +145,26 @@
       "step": "Passo {{current}} de {{total}}",
       "skip": "Pular tour",
       "finish": "Concluir",
-      "kpis": { "title": "Indicadores do negócio", "body": "Verificações, aprovação automática, fraude bloqueada e o tempo médio de conclusão — tudo em uma olhada." },
-      "funnel": { "title": "Funil de verificação", "body": "Do link enviado até a aprovação: veja onde as pessoas desistem ou são bloqueadas." },
-      "fraud": { "title": "Fraude por tipo e dispositivos", "body": "O Copiloto Antifraude classifica cada sinal — replay de tela, foto impressa, CPF duplicado — por semana." },
-      "map": { "title": "Geografia e horário", "body": "Mapa por UF e mapa de calor por dia/hora mostram onde e quando as verificações acontecem." },
-      "simulate": { "title": "Veja a tela do titular", "body": "Clique em \"Simular onboarding\" para abrir o fluxo completo de verificação, com a moldura de celular." }
+      "kpis": {
+        "title": "Indicadores do negócio",
+        "body": "Verificações, aprovação automática, fraude bloqueada e o tempo médio de conclusão — tudo em uma olhada."
+      },
+      "funnel": {
+        "title": "Funil de verificação",
+        "body": "Do link enviado até a aprovação: veja onde as pessoas desistem ou são bloqueadas."
+      },
+      "fraud": {
+        "title": "Fraude por tipo e dispositivos",
+        "body": "O Copiloto Antifraude classifica cada sinal — replay de tela, foto impressa, CPF duplicado — por semana."
+      },
+      "map": {
+        "title": "Geografia e horário",
+        "body": "Mapa por UF e mapa de calor por dia/hora mostram onde e quando as verificações acontecem."
+      },
+      "simulate": {
+        "title": "Veja a tela do titular",
+        "body": "Clique em \"Simular onboarding\" para abrir o fluxo completo de verificação, com a moldura de celular."
+      }
     }
   },
   "privacy": {

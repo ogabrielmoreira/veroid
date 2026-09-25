@@ -75,7 +75,6 @@
   },
   "honesty": "Demo prototype. Detection uses computer vision and generative AI and does not replace certified liveness detection (ISO/IEC 30107-3).",
   "landing": {
-    "eyebrow": "White-label KYC · liveness · LGPD",
     "title": "Know who's who, without losing who's a customer.",
     "lead": "Verification links branded as your company, face capture with liveness, and a Fraud Copilot that explains every decision. Built for fintech, lending, agribusiness and automotive.",
     "ctaSignup": "Create demo account",
@@ -99,7 +98,32 @@
       }
     },
     "caseLink": "See the portfolio case study",
-    "privacyLink": "Data subject rights (LGPD)"
+    "privacyLink": "Data subject rights (LGPD)",
+    "nav": {
+      "label": "Sections",
+      "identity": "Identity",
+      "biometry": "Biometry",
+      "security": "Security"
+    },
+    "step": {
+      "current": "01",
+      "total": "05"
+    },
+    "heroAlt": "Person wearing smart glasses during a facial verification, with a biometric scan overlay beside them.",
+    "corner": {
+      "tech": "Technology that builds trust",
+      "protection": "More protection for your business",
+      "identity": "Digital identity, secured"
+    },
+    "hero": {
+      "analyzing": "Analyzing your identity…",
+      "verifying": "Verification in progress",
+      "checklist": {
+        "liveness": "Liveness check",
+        "biometrics": "Facial biometrics",
+        "document": "Document"
+      }
+    }
   },
   "demo": {
     "ctaCreate": "Create my account",
@@ -121,11 +145,26 @@
       "step": "Step {{current}} of {{total}}",
       "skip": "Skip tour",
       "finish": "Finish",
-      "kpis": { "title": "Business indicators", "body": "Verifications, auto-approval rate, blocked fraud and average completion time — all at a glance." },
-      "funnel": { "title": "Verification funnel", "body": "From link sent to approval: see where people drop off or get blocked." },
-      "fraud": { "title": "Fraud by type and devices", "body": "The Fraud Copilot classifies each signal — screen replay, printed photo, duplicate CPF — by week." },
-      "map": { "title": "Geography and timing", "body": "The UF map and the day/hour heatmap show where and when verifications happen." },
-      "simulate": { "title": "See the subject's screen", "body": "Click \"Simulate onboarding\" to open the full verification flow, in a phone frame." }
+      "kpis": {
+        "title": "Business indicators",
+        "body": "Verifications, auto-approval rate, blocked fraud and average completion time — all at a glance."
+      },
+      "funnel": {
+        "title": "Verification funnel",
+        "body": "From link sent to approval: see where people drop off or get blocked."
+      },
+      "fraud": {
+        "title": "Fraud by type and devices",
+        "body": "The Fraud Copilot classifies each signal — screen replay, printed photo, duplicate CPF — by week."
+      },
+      "map": {
+        "title": "Geography and timing",
+        "body": "The UF map and the day/hour heatmap show where and when verifications happen."
+      },
+      "simulate": {
+        "title": "See the subject's screen",
+        "body": "Click \"Simulate onboarding\" to open the full verification flow, in a phone frame."
+      }
     }
   },
   "privacy": {
