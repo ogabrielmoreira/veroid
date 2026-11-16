@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LottieIcon } from '@/components/LottieIcon'
 import { Button } from '@/components/ui/Button'
@@ -15,8 +15,8 @@ const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matc
  * cartão com a explicação acompanha. Sem botão de pular nem de fechar até o último passo; a pessoa
  * avança com "Próximo". Se o alvo não existe na tela (ex.: menu no celular), o passo vira um cartão central.
  */
-export function SpotlightTour({ steps, index, onIndex, onFinish }: {
-  steps: TourStep[]; index: number; onIndex: (i: number) => void; onFinish: () => void
+export function SpotlightTour({ steps, index, onIndex, onFinish, extra }: {
+  steps: TourStep[]; index: number; onIndex: (i: number) => void; onFinish: () => void; extra?: (key: string) => ReactNode
 }) {
   const { t } = useTranslation()
   const step = steps[index]
@@ -109,6 +109,7 @@ export function SpotlightTour({ steps, index, onIndex, onFinish }: {
             </div>
           </div>
           <p id="tour-b" className="m-0 t-body-lg text-[var(--ink-body)]">{t(`demoApp.tour.steps.${step.key}.body`)}</p>
+          {extra?.(step.key)}
         </div>
 
         <div className="flex items-center gap-1.5" aria-hidden="true">

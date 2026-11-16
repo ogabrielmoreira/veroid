@@ -25,19 +25,19 @@ const TABS: Array<{ k: Tab; icon: IconName }> = [
 const TOUR: TourStep[] = [
   { key: 'welcome', tab: 'overview', lottie: 'wave' },
   { key: 'nav', tab: 'overview', target: 'nav', lottie: 'bulb' },
+  { key: 'customize', tab: 'overview', target: 'tenant', lottie: 'party' },
   { key: 'overview', tab: 'overview', target: 'kpis', lottie: 'chart' },
   { key: 'linksForm', tab: 'links', target: 'link-form', lottie: 'bulb' },
   { key: 'linksOff', tab: 'links', target: 'send-off', lottie: 'lock' },
   { key: 'leads', tab: 'leads', target: 'leads', lottie: 'bulb' },
   { key: 'review', tab: 'review', target: 'review', lottie: 'check' },
   { key: 'simulator', tab: 'simulator', target: 'phone', lottie: 'rocket' },
-  { key: 'settings', tab: 'settings', target: 'settings', lottie: 'party' },
+  { key: 'settings', tab: 'settings', target: 'settings', lottie: 'check' },
   { key: 'official', tab: 'overview', lottie: 'lock' },
 ]
 
 const LS_NAME = 'veroid.demo.name'
 const LS_COLOR = 'veroid.demo.color'
-const SS_TOUR = 'veroid.demo.tourDone'
 const read = (k: string, fb: string, s = localStorage) => { try { return s.getItem(k) ?? fb } catch { return fb } }
 const write = (k: string, v: string, s = localStorage) => { try { s.setItem(k, v) } catch { /* modo privado */ } }
 
@@ -49,7 +49,7 @@ export function DemoWorkspace() {
   const [drawer, setDrawer] = useState(false)
   const [name, setName] = useState(() => read(LS_NAME, 'Lorem Ipsum S.A.'))
   const [color, setColor] = useState(() => read(LS_COLOR, '#3F4FB8'))
-  const [tourOpen, setTourOpen] = useState(() => read(SS_TOUR, '', sessionStorage) !== '1')
+  const [tourOpen, setTourOpen] = useState(true) // o tutorial abre a cada acesso
   const [tourIdx, setTourIdx] = useState(0)
 
   useEffect(() => { write(LS_NAME, name) }, [name])
@@ -63,7 +63,7 @@ export function DemoWorkspace() {
   const vars = useMemo(() => brandCssVars({ primary: normalizeHex(color) ?? '#3F4FB8', accent: normalizeHex(color) ?? '#3F4FB8' }), [color])
 
   const goTour = (i: number) => { setTourIdx(i); const tb = TOUR[i].tab as Tab | undefined; if (tb) setTab(tb) }
-  const finishTour = () => { write(SS_TOUR, '1', sessionStorage); setTourOpen(false); setTab('overview') }
+  const finishTour = () => { setTourOpen(false); setTab('overview') }
   const restart = () => { setDrawer(false); goTour(0); setTourOpen(true) }
   const pick = (k: Tab) => { setTab(k); setDrawer(false) }
 
@@ -83,7 +83,7 @@ export function DemoWorkspace() {
       {/* menu lateral (desktop) */}
       <aside data-tour="nav" className="sticky top-0 hidden h-dvh flex-col gap-6 border-r border-[var(--border)] bg-[var(--surface)] p-5 lg:flex">
         <Logo />
-        <div className="flex items-center gap-3 rounded-[14px] bg-[var(--n-50)] p-3">
+        <div data-tour="tenant" className="flex items-center gap-3 rounded-[14px] bg-[var(--n-50)] p-3">
           <span className="grid size-10 shrink-0 place-items-center rounded-[12px] font-display text-[15px] font-bold text-white" style={{ background: 'var(--brand-600)' }} aria-hidden="true">{initialsOf(name)}</span>
           <span className="min-w-0"><span className="block truncate text-[14px] font-semibold text-[var(--ink)]">{name}</span><span className="block t-caption text-[var(--ink-muted)]">{t('demoApp.tenant')}</span></span>
         </div>
@@ -129,7 +129,8 @@ export function DemoWorkspace() {
         </main>
       </div>
 
-      {tourOpen ? <SpotlightTour steps={TOUR} index={tourIdx} onIndex={goTour} onFinish={finishTour} /> : null}
+      {tourOpen ? <SpotlightTour steps={TOUR} index={tourIdx} onIndex={goTour} onFinish={finishTour}
+        extra={(key) => key === 'customize' ? <TourCustomize name={name} setName={setName} color={color} setColor={setColor} /> : null} /> : null}
     </div>
   )
 }
@@ -336,5 +337,21 @@ function SettingsTab({ name, setName, color, setColor }: { name: string; setName
         <p className="m-0 t-caption text-[var(--ink-muted)]">{t('demoApp.settings.local')}</p>
       </div>
     </section>
+  )
+}
+
+/** Personalização dentro do tutorial: nome e cor da empresa, aplicados ao vivo. Fica só no navegador. */
+function TourCustomize({ name, setName, color, setColor }: { name: string; setName: (v: string) => void; color: string; setColor: (v: string) => void }) {
+  const { t } = useTranslation()
+  const c = normalizeHex(color) ?? '#3F4FB8'
+  return (
+    <div className="flex flex-col gap-3 rounded-[14px] bg-[var(--n-50)] p-3">
+      <InputField id="tour-name" label={t('demoApp.settings.name')} value={name} maxLength={40} onChange={(e) => setName(e.target.value)} autoComplete="off" />
+      <div className="flex items-center gap-2">
+        <label htmlFor="tour-color" className="t-label text-[var(--ink)]">{t('demoApp.settings.color')}</label>
+        <input id="tour-color" type="color" value={c} onChange={(e) => setColor(e.target.value)} className="size-10 cursor-pointer rounded-sm border border-[var(--input-border)] bg-transparent p-1" />
+        <span className="font-mono text-[13px] text-[var(--ink-muted)]">{c.toUpperCase()}</span>
+      </div>
+    </div>
   )
 }

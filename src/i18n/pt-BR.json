@@ -1533,6 +1533,10 @@
         "linksOff": {
           "title": "Envio desativado",
           "body": "WhatsApp, SMS, e-mail e QR Code ficam visíveis para mostrar o que o produto faz, mas desativados nesta demonstração. O token do link fica sempre oculto."
+        },
+        "customize": {
+          "title": "Deixe com a sua cara",
+          "body": "Digite o nome da sua empresa e escolha uma cor. A mudança aparece na hora e fica só no seu navegador."
         }
       },
       "language": "Idioma"

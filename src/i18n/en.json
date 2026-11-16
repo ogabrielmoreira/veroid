@@ -1533,6 +1533,10 @@
         "linksOff": {
           "title": "Sending is disabled",
           "body": "WhatsApp, SMS, email and QR Code stay visible to show what the product does, but are disabled in this demo. The link token is always hidden."
+        },
+        "customize": {
+          "title": "Make it yours",
+          "body": "Type your company name and pick a color. The change shows up right away and stays only in your browser."
         }
       },
       "language": "Language"
