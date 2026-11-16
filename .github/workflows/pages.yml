@@ -22,11 +22,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # Valores públicos por design: já vão no bundle que o navegador baixa.
-      # A proteção dos dados é o RLS no Supabase, não o segredo da chave.
-      VITE_SUPABASE_URL: https://ajhfysjgaqduomkmkeec.supabase.co
-      VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_OHrtmLpE3dLqlIs1Wtuhvw_4w_Pf3nZ
-      VITE_LOGIN_EMAIL_OTP: 'false'
+      # Vitrine sem backend: nenhuma variável do Supabase é injetada no bundle de propósito.
+      # VITE_MAINTENANCE=true: a home é o portal de demonstração fictício (sem câmera, sem coleta).
+      # Para religar o sistema completo, remova esta linha e reponha VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY.
+      VITE_MAINTENANCE: 'true'
     steps:
       - uses: actions/checkout@v4
 

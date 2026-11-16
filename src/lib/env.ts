@@ -10,6 +10,8 @@ export const env = {
   loginEmailOtp: import.meta.env.VITE_LOGIN_EMAIL_OTP === 'true',
   basePath: import.meta.env.BASE_URL.replace(/\/$/, ''), // "/veroid"
   isConfigured: Boolean(url && key),
+  /** true = cadastro/login e simulação pausados (backend de demonstração desligado); o painel público usa dados estáticos. */
+  maintenance: import.meta.env.VITE_MAINTENANCE === 'true',
 }
 
 /** URL absoluta dentro do app, ex.: appUrl('/auth/callback') → https://gabrielmoreira.tech/veroid/auth/callback */

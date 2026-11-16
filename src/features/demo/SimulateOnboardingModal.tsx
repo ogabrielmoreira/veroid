@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { Alert } from '@/components/ui/Alert'
+import { Icon } from '@/components/ui/Icon'
 import { Modal } from '@/components/ui/Modal'
 import { Spinner } from '@/components/ui/Spinner'
-import { authErrorMessage } from '@/lib/authErrors'
 import { env } from '@/lib/env'
 import { supabase } from '@/lib/supabase'
 
@@ -16,7 +15,7 @@ export function SimulateOnboardingModal({ open, onClose }: { open: boolean; onCl
   const { t } = useTranslation()
   const q = useQuery({
     queryKey: ['public-demo-flow'],
-    enabled: open,
+    enabled: open && !env.maintenance,
     staleTime: 0,
     queryFn: async (): Promise<{ token: string }> => {
       const { data, error } = await supabase.rpc('start_public_demo_flow')
@@ -28,10 +27,14 @@ export function SimulateOnboardingModal({ open, onClose }: { open: boolean; onCl
   return (
     <Modal open={open} onClose={onClose} title={t('demo.simulate.title')} icon="capture" description={t('demo.simulate.description')} size="md">
       <div className="flex flex-col items-center gap-4">
-        {q.isLoading ? (
+        {env.maintenance || q.isError ? (
+          <div className="flex min-h-[320px] max-w-[420px] flex-col items-center justify-center gap-3 text-center">
+            <Icon name="settings" size={30} className="text-[var(--brand-600)]" />
+            <h3 className="m-0 t-h3 font-sans">{t('maintenance.simulateTitle')}</h3>
+            <p className="m-0 t-body text-[var(--ink-muted)]">{t('maintenance.simulateBody')}</p>
+          </div>
+        ) : q.isLoading ? (
           <div className="flex min-h-[520px] items-center justify-center"><Spinner size={28} /></div>
-        ) : q.isError ? (
-          <Alert variant="error">{authErrorMessage(q.error, t)}</Alert>
         ) : q.data ? (
           <div
             className="relative mx-auto w-[300px] rounded-[36px] border-[10px] border-[#14162B] bg-[#14162B] shadow-[var(--shadow-modal)]"
@@ -46,7 +49,7 @@ export function SimulateOnboardingModal({ open, onClose }: { open: boolean; onCl
             />
           </div>
         ) : null}
-        <p className="m-0 max-w-[420px] text-center t-caption text-[var(--ink-muted)]">{t('demo.simulate.note')}</p>
+        {!env.maintenance && !q.isError ? <p className="m-0 max-w-[420px] text-center t-caption text-[var(--ink-muted)]">{t('demo.simulate.note')}</p> : null}
       </div>
     </Modal>
   )

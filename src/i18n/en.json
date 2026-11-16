@@ -122,6 +122,16 @@
         "biometrics": "Facial biometrics",
         "document": "Document"
       }
+    },
+    "demo": {
+      "lead": "A portal for your company to send brand-styled verification links and follow results on a dashboard. This is a portfolio showcase: fictional data only.",
+      "ctaExplore": "Explore the dashboard",
+      "ctaGate": "Sign in with password",
+      "careTitle": "Safe showcase, no biometrics",
+      "careBody": "No camera is opened and no photo, video or document is collected here. Facial biometrics are sensitive data under Brazil's LGPD and would only be used with a legal basis, consent and a proper environment.",
+      "peekLabel": "Demo dashboard · fictional data",
+      "insideTitle": "See the system from the inside",
+      "insideBody": "This is the dashboard a company would use to follow verifications, blocked fraud and where customers drop off. The numbers are fictional."
     }
   },
   "demo": {
@@ -1293,5 +1303,217 @@
     "cnh_category": "License category",
     "plate": "Plate/VIN",
     "deposit_amount": "Deposit amount"
+  },
+  "maintenance": {
+    "title": "Sign-up under maintenance",
+    "body": "We're improving the demo infrastructure, so creating an account and signing in are temporarily unavailable. In the meantime, you can explore the full dashboard with fictional data.",
+    "cta": "Explore the demo dashboard",
+    "back": "Back to home",
+    "demoBanner": "You don't need to sign in for now: explore the dashboard and try the liveness check freely.",
+    "simulateTitle": "Simulation under maintenance",
+    "simulateBody": "The live subject-flow simulation is temporarily unavailable. The dashboard, guided tour and charts keep working as usual.",
+    "noLogin": "Have the demo password? Enter the portal to see link sending and the review queue with fictional data.",
+    "gateCta": "Enter with password"
+  },
+  "demoApp": {
+    "title": "Vero ID portal · demo",
+    "disabledHint": "Disabled in this demo",
+    "disabledBadge": "Disabled in demo",
+    "safeTitle": "This project collects nothing from you",
+    "safeBody": "There is no camera, photo, document, facial recognition or message sending here, and your data is neither collected nor sent. Everything is fictional. For safety and because of Brazil's LGPD, these functions were turned off; in the official system the idea was to run biometric verification. The only things you change here (name and color) stay in your browser.",
+    "tabs": {
+      "overview": "Overview",
+      "links": "Links",
+      "leads": "Lead qualification",
+      "review": "Review queue",
+      "simulator": "Onboarding simulator",
+      "settings": "Settings"
+    },
+    "notes": {
+      "overview": "Dashboard with fictional numbers: verifications, auto-approval, blocked fraud and where customers drop off.",
+      "links": "In the official system the company generates a unique link and sends it to the customer. Here you can generate a fake link; sending by WhatsApp, SMS, email and QR Code is disabled. The link token is hidden.",
+      "leads": "These leads are fictional. In the official system, whoever passes verification and reaches the minimum score becomes a qualified customer, automatically or manually.",
+      "review": "Sessions that need a human decision. No face is shown: only a placeholder. You can approve or reject to see how it works; nothing is saved.",
+      "simulator": "See the step by step a customer would take on their phone. It's only a staging: no camera request is made to your browser.",
+      "settings": "Customize the company name and primary color. Saved only in your browser."
+    },
+    "links": {
+      "new": "Generate verification link",
+      "label": "Link nickname",
+      "labelHelp": "Use a made-up name. Don't type real people's data.",
+      "validity": "Validity",
+      "hours": "{{n}} hours",
+      "generate": "Generate simulated link",
+      "sendVia": "Send via",
+      "list": "Generated links",
+      "batch": "Import batch (CSV)",
+      "export": "Export CSV",
+      "copy": "Copy link",
+      "simulated": "Simulated",
+      "expires": "expires {{when}}",
+      "tokenHidden": "token hidden for security"
+    },
+    "leads": {
+      "export": "Export list (CSV)",
+      "import": "Upload leads",
+      "cols": {
+        "lead": "Lead",
+        "doc": "Tax ID",
+        "origin": "Origin",
+        "score": "Score",
+        "status": "Qualification"
+      },
+      "origin": {
+        "auto": "Auto-created",
+        "manual": "Manual"
+      },
+      "status": {
+        "qualified": "Qualified",
+        "analysis": "In analysis",
+        "notQualified": "Not qualified"
+      },
+      "note": "Fictional names (lorem ipsum) and tax ID always hidden. Exporting and uploading lists is disabled: it would be third-party personal data."
+    },
+    "review": {
+      "score": "Score",
+      "signal": "Main signal",
+      "token": "Token",
+      "noFace": "No photo: for safety, we don't display faces.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "undo": "Undo",
+      "note": "Local simulation: the decision disappears when you reload.",
+      "state": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "signals": {
+        "lowLight": "Low light",
+        "device": "Repeated device",
+        "doc": "Inconsistent data"
+      }
+    },
+    "sim": {
+      "splashHint": "Tap to open the app",
+      "open": "Open app",
+      "next": "Next",
+      "startBtn": "Start",
+      "slides": {
+        "0": {
+          "title": "Confirm your identity with {{org}}",
+          "text": "A quick step-by-step, made for your phone."
+        },
+        "1": {
+          "title": "Takes about 2 minutes",
+          "text": "You do a liveness check and verify your document."
+        },
+        "2": {
+          "title": "Nothing is saved in this demo",
+          "text": "This is a staging: none of your data is collected."
+        }
+      },
+      "permTitle": "“{{org}}” would like to access the camera",
+      "permText": "Simulated request. Your browser is not asked and no camera opens.",
+      "allow": "Allow (simulated)",
+      "deny": "Don't allow",
+      "face": {
+        "title": "Liveness check (simulated)",
+        "hint": "Illustrative animation: no camera and nobody's face.",
+        "steps": {
+          "find": "Looking for a face",
+          "blink": "Blink your eyes",
+          "turn": "Turn your head",
+          "done": "Liveness check complete"
+        }
+      },
+      "doc": {
+        "title": "Document (simulated)",
+        "hint": "Illustrative document: nothing is actually read.",
+        "fields": {
+          "name": "Name",
+          "id": "Document number",
+          "birth": "Date of birth"
+        }
+      },
+      "result": {
+        "title": "Verification complete",
+        "score": "Risk score (fictional)",
+        "decision": "Approved",
+        "text": "In the official system, this result would land on the company's dashboard."
+      },
+      "restart": "Watch again",
+      "progress": "Screen {{n}} of {{total}}",
+      "log": {
+        "title": "What the system would record (fictional)",
+        "empty": "Open the app on the left to see events appear.",
+        "note": "Made-up events for illustration. None of them is stored or sent.",
+        "events": {
+          "app_open": "App opened",
+          "consent_shown": "Consent notice shown",
+          "camera_asked": "Camera permission requested",
+          "camera_allowed": "Permission granted (simulated)",
+          "camera_denied": "Permission denied (simulated)",
+          "liveness_started": "Liveness check started",
+          "liveness_passed": "Liveness check passed",
+          "document_read": "Document read",
+          "decision": "Decision: approved"
+        }
+      },
+      "offTitle": "The camera is never opened",
+      "offBody": "For security and LGPD reasons, I turned the camera off. In the official system the idea was to do facial biometrics and check the document; here you see an animation of the steps, with nobody's face. This project is a rebuild of the official system and collects nothing."
+    },
+    "settings": {
+      "name": "Company name (fictional)",
+      "color": "Primary color",
+      "contrastOk": "Contrast with white text: {{r}} (passes AA).",
+      "contrastBad": "Contrast with white text: {{r}} (below AA). Suggestion: {{hex}}.",
+      "logo": "Logo",
+      "logoOff": "Logo upload is disabled in this demo; a placeholder is used.",
+      "local": "These two settings are saved only in your browser's local storage and are never sent."
+    },
+    "tour": {
+      "step": "Step {{current}} of {{total}}",
+      "next": "Next",
+      "back": "Back",
+      "finish": "Finish",
+      "restart": "Tutorial",
+      "required": "Read each step and click Next to continue.",
+      "steps": {
+        "welcome": {
+          "title": "Welcome to the demo",
+          "body": "This project won't collect anything from you: it takes no photo, doesn't open the camera, asks for no document and sends your data nowhere. Everything you see is fictional."
+        },
+        "overview": {
+          "title": "Overview",
+          "body": "This dashboard shows verifications, auto-approval, blocked fraud and the customer funnel. The numbers are made up, but it's the same dashboard a company would use."
+        },
+        "links": {
+          "title": "Verification links",
+          "body": "In the official system you generate a link and send it to the customer. Here you can generate a fake link. WhatsApp, SMS, email, QR Code, batch and export stay visible but disabled. The link token is hidden."
+        },
+        "leads": {
+          "title": "Lead qualification",
+          "body": "These leads are fictional. In the official system, whoever is approved and reaches the score becomes a qualified customer, automatically or manually. Exporting and uploading lists is disabled."
+        },
+        "review": {
+          "title": "Review queue",
+          "body": "Here the team approves or rejects doubtful cases. No face is shown, only a placeholder. Try the buttons freely: nothing is saved."
+        },
+        "simulator": {
+          "title": "Onboarding simulator",
+          "body": "Shows the customer's step by step, including the screen that would ask for camera permission. It's only staging: your browser is never asked and no camera opens."
+        },
+        "settings": {
+          "title": "Settings",
+          "body": "The only things you can change are the company name and color. They stay in your browser. Logos and photos are not accepted."
+        },
+        "official": {
+          "title": "And the official system?",
+          "body": "The idea was to do liveness and document checks through biometrics. Since facial biometrics and documents are sensitive data under LGPD, I switched those parts off in this showcase. Thanks for checking it out!"
+        }
+      },
+      "language": "Language"
+    }
   }
 }

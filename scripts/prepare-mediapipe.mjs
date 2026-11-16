@@ -3,8 +3,9 @@
 import { copyFile, mkdir, readdir, stat, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const root = new URL('..', import.meta.url).pathname
+const root = fileURLToPath(new URL('..', import.meta.url))
 const src = join(root, 'node_modules/@mediapipe/tasks-vision/wasm')
 const dest = join(root, 'public/mediapipe/wasm')
 const modelPath = join(root, 'public/mediapipe/face_landmarker.task')

@@ -11,22 +11,29 @@ import { InvitePage } from '@/features/org/InvitePage'
 import { OrgGate } from '@/features/org/OrgGate'
 import { env } from '@/lib/env'
 
+const demo = import.meta.env.VITE_MAINTENANCE === 'true'
+
 export const router = createBrowserRouter(
   [
-    { path: '/', element: <LandingPage /> },
-    {
+    ...(demo ? [] : [{ path: '/', element: <LandingPage /> }]),
+    ...(demo ? [] : [{
       element: <RequireGuest />,
       children: [
         { path: '/entrar', element: <SignInPage /> },
         { path: '/criar-conta', element: <SignUpPage /> },
         { path: '/recuperar-senha', element: <ForgotPasswordPage /> },
       ],
-    },
-    { path: '/verificar', element: <VerifyPage /> },
+    }]),
+    ...(demo ? [
+      // Modo vitrine: a home já é o portal de demonstração. Sem Supabase, sem câmera, sem coleta.
+      { path: '/', lazy: async () => ({ Component: (await import('@/features/demo/DemoWorkspace')).DemoWorkspace }) },
+      { path: '*', element: <Navigate to="/" replace /> },
+    ] : [
     // Painel público "Explorar sem cadastro" (§10): bundle separado, sem exigir login
     { path: '/demo', lazy: async () => ({ Component: (await import('@/features/demo/PublicDemoPage')).PublicDemoPage }) },
     // Direitos do titular (LGPD, §8): acesso/exclusão sem exigir login
     { path: '/privacidade', lazy: async () => ({ Component: (await import('@/features/privacy/DataRightsPage')).DataRightsPage }) },
+    { path: '/verificar', element: <VerifyPage /> },
     { path: '/auth/callback', element: <CallbackPage /> },
     { path: '/nova-senha', element: <ResetPasswordPage /> },
     { path: '/convite/:token', element: <InvitePage /> },
@@ -58,7 +65,8 @@ export const router = createBrowserRouter(
         },
       ],
     },
-    { path: '*', element: <Navigate to="/" replace /> },
+    ]),
+    ...(demo ? [] : [{ path: '*', element: <Navigate to="/" replace /> }]),
   ],
   { basename: env.basePath || '/' },
 )

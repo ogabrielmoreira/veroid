@@ -122,6 +122,16 @@
         "biometrics": "Biometria facial",
         "document": "Documento"
       }
+    },
+    "demo": {
+      "lead": "Portal para a sua empresa enviar links de verificação com a sua marca e acompanhar os resultados em um painel. Esta é uma vitrine de portfólio: só dados fictícios.",
+      "ctaExplore": "Explorar o painel",
+      "ctaGate": "Acesso com senha",
+      "careTitle": "Vitrine segura, sem biometria",
+      "careBody": "Nenhuma câmera é aberta e nenhuma foto, vídeo ou documento é coletado aqui. A biometria facial é dado sensível pela LGPD e só entraria com base legal, consentimento e ambiente próprio.",
+      "peekLabel": "Painel de demonstração · dados fictícios",
+      "insideTitle": "Veja o sistema por dentro",
+      "insideBody": "Este é o painel que uma empresa usaria para acompanhar verificações, fraudes bloqueadas e onde os clientes desistem. Os números são fictícios."
     }
   },
   "demo": {
@@ -1293,5 +1303,217 @@
     "cnh_category": "Categoria CNH",
     "plate": "Placa/chassi",
     "deposit_amount": "Valor do sinal"
+  },
+  "maintenance": {
+    "title": "Cadastro em manutenção",
+    "body": "Estamos fazendo melhorias na infraestrutura de demonstração e, por isso, criar conta e entrar estão temporariamente indisponíveis. Enquanto isso, você pode explorar o painel completo com dados fictícios.",
+    "cta": "Explorar o painel de demonstração",
+    "back": "Voltar ao início",
+    "demoBanner": "Você não precisa fazer login por enquanto: explore o painel e teste a prova de vida livremente.",
+    "simulateTitle": "Simulação em manutenção",
+    "simulateBody": "A simulação ao vivo do fluxo do titular está temporariamente indisponível. O painel, o tour guiado e os gráficos continuam funcionando normalmente.",
+    "noLogin": "Tem a senha da demonstração? Entre no portal para ver o envio de links e a fila de revisão com dados fictícios.",
+    "gateCta": "Entrar com a senha"
+  },
+  "demoApp": {
+    "title": "Portal Vero ID · demonstração",
+    "disabledHint": "Desativado nesta demonstração",
+    "disabledBadge": "Desativado na demo",
+    "safeTitle": "Este projeto não coleta nada seu",
+    "safeBody": "Aqui não há câmera, foto, documento, reconhecimento facial nem envio de mensagens, e seus dados não são coletados nem enviados. Tudo é fictício. Por segurança e por causa da LGPD, essas funções foram desativadas; no sistema oficial a ideia era fazer a verificação biométrica. As únicas coisas que você altera aqui (nome e cor) ficam só no seu navegador.",
+    "tabs": {
+      "overview": "Visão geral",
+      "links": "Links",
+      "leads": "Qualificação de leads",
+      "review": "Fila de revisão",
+      "simulator": "Simulador de onboarding",
+      "settings": "Configurações"
+    },
+    "notes": {
+      "overview": "Painel com números fictícios: verificações, aprovação automática, fraude bloqueada e onde os clientes desistem.",
+      "links": "No sistema oficial, a empresa gera um link único e o envia ao cliente. Aqui você pode gerar um link de mentira; o envio por WhatsApp, SMS, e-mail e QR Code está desativado. O token do link fica oculto.",
+      "leads": "Estes leads são fictícios. No sistema oficial, quem passa na verificação e atinge o score mínimo vira cliente qualificado, de forma automática ou manual.",
+      "review": "Sessões que pedem decisão humana. Nenhum rosto é exibido: só um espaço reservado. Você pode aprovar ou reprovar para ver como funciona; nada é salvo.",
+      "simulator": "Veja o passo a passo que o cliente faria no celular. É só uma encenação: nenhum pedido de câmera é feito ao seu navegador.",
+      "settings": "Personalize o nome da empresa e a cor principal. Fica salvo só no seu navegador."
+    },
+    "links": {
+      "new": "Gerar link de verificação",
+      "label": "Apelido do link",
+      "labelHelp": "Use um nome fictício. Não digite dados de pessoas reais.",
+      "validity": "Validade",
+      "hours": "{{n}} horas",
+      "generate": "Gerar link simulado",
+      "sendVia": "Enviar por",
+      "list": "Links gerados",
+      "batch": "Importar lote (CSV)",
+      "export": "Exportar CSV",
+      "copy": "Copiar link",
+      "simulated": "Simulado",
+      "expires": "expira {{when}}",
+      "tokenHidden": "token oculto por segurança"
+    },
+    "leads": {
+      "export": "Exportar lista (CSV)",
+      "import": "Subir leads",
+      "cols": {
+        "lead": "Lead",
+        "doc": "CPF",
+        "origin": "Origem",
+        "score": "Score",
+        "status": "Qualificação"
+      },
+      "origin": {
+        "auto": "Autocriado",
+        "manual": "Manual"
+      },
+      "status": {
+        "qualified": "Qualificado",
+        "analysis": "Em análise",
+        "notQualified": "Não qualificado"
+      },
+      "note": "Nomes fictícios (lorem ipsum) e CPF sempre oculto. Exportar e subir listas está desativado: seria dado pessoal de terceiros."
+    },
+    "review": {
+      "score": "Score",
+      "signal": "Sinal principal",
+      "token": "Token",
+      "noFace": "Sem foto: por segurança, não exibimos rostos.",
+      "approve": "Aprovar",
+      "reject": "Reprovar",
+      "undo": "Desfazer",
+      "note": "Simulação local: a decisão some ao recarregar a página.",
+      "state": {
+        "pending": "Pendente",
+        "approved": "Aprovada",
+        "rejected": "Reprovada"
+      },
+      "signals": {
+        "lowLight": "Pouca luz",
+        "device": "Dispositivo repetido",
+        "doc": "Dados inconsistentes"
+      }
+    },
+    "sim": {
+      "splashHint": "Toque para abrir o app",
+      "open": "Abrir app",
+      "next": "Próximo",
+      "startBtn": "Começar",
+      "slides": {
+        "0": {
+          "title": "Confirme sua identidade com a {{org}}",
+          "text": "Um passo a passo rápido, feito para o celular."
+        },
+        "1": {
+          "title": "Leva cerca de 2 minutos",
+          "text": "Você faz uma prova de vida e confere o documento."
+        },
+        "2": {
+          "title": "Nada é salvo nesta demo",
+          "text": "Esta é uma encenação: nenhum dado seu é coletado."
+        }
+      },
+      "permTitle": "“{{org}}” quer acessar a câmera",
+      "permText": "Pedido simulado. O seu navegador não é consultado e nenhuma câmera abre.",
+      "allow": "Permitir (simulado)",
+      "deny": "Não permitir",
+      "face": {
+        "title": "Prova de vida (simulada)",
+        "hint": "Animação ilustrativa: sem câmera e sem rosto de ninguém.",
+        "steps": {
+          "find": "Procurando um rosto",
+          "blink": "Pisque os olhos",
+          "turn": "Vire a cabeça",
+          "done": "Prova de vida concluída"
+        }
+      },
+      "doc": {
+        "title": "Documento (simulado)",
+        "hint": "Documento ilustrativo: nada é lido de verdade.",
+        "fields": {
+          "name": "Nome",
+          "id": "Número do documento",
+          "birth": "Data de nascimento"
+        }
+      },
+      "result": {
+        "title": "Verificação concluída",
+        "score": "Score de risco (fictício)",
+        "decision": "Aprovada",
+        "text": "No sistema oficial, este resultado cairia no painel da empresa."
+      },
+      "restart": "Ver de novo",
+      "progress": "Tela {{n}} de {{total}}",
+      "log": {
+        "title": "O que o sistema registraria (fictício)",
+        "empty": "Abra o app ao lado para ver os eventos aparecerem.",
+        "note": "Eventos inventados para ilustrar. Nenhum deles é gravado ou enviado.",
+        "events": {
+          "app_open": "App aberto",
+          "consent_shown": "Termo de consentimento exibido",
+          "camera_asked": "Permissão de câmera solicitada",
+          "camera_allowed": "Permissão concedida (simulada)",
+          "camera_denied": "Permissão negada (simulada)",
+          "liveness_started": "Prova de vida iniciada",
+          "liveness_passed": "Prova de vida aprovada",
+          "document_read": "Documento lido",
+          "decision": "Decisão: aprovada"
+        }
+      },
+      "offTitle": "A câmera nunca é aberta",
+      "offBody": "Por motivos de segurança e de LGPD, desativei a câmera. No sistema oficial a ideia era fazer a biometria facial e conferir o documento; aqui você vê uma animação do passo a passo, sem rosto de ninguém. Este projeto é uma reconstrução do sistema oficial e não recolhe nada."
+    },
+    "settings": {
+      "name": "Nome da empresa (fictício)",
+      "color": "Cor principal",
+      "contrastOk": "Contraste com texto branco: {{r}} (passa AA).",
+      "contrastBad": "Contraste com texto branco: {{r}} (abaixo de AA). Sugestão: {{hex}}.",
+      "logo": "Logo",
+      "logoOff": "Envio de logo desativado nesta demonstração; usamos um espaço reservado.",
+      "local": "Estas duas configurações ficam salvas só no armazenamento local do seu navegador e nunca são enviadas."
+    },
+    "tour": {
+      "step": "Passo {{current}} de {{total}}",
+      "next": "Próximo",
+      "back": "Voltar",
+      "finish": "Concluir",
+      "restart": "Tutorial",
+      "required": "Leia cada passo e clique em Próximo para continuar.",
+      "steps": {
+        "welcome": {
+          "title": "Bem-vindo(a) à demonstração",
+          "body": "Este projeto não vai colher nada seu: não tira foto, não abre a câmera, não pede documento e não envia seus dados a lugar nenhum. Tudo o que você vê é fictício."
+        },
+        "overview": {
+          "title": "Visão geral",
+          "body": "Este painel mostra verificações, aprovação automática, fraude bloqueada e o funil do cliente. Os números são inventados, mas o painel é o mesmo que uma empresa usaria."
+        },
+        "links": {
+          "title": "Links de verificação",
+          "body": "No sistema oficial você gera um link e o envia ao cliente. Aqui dá para gerar um link de mentira. WhatsApp, SMS, e-mail, QR Code, lote e exportação ficam visíveis, mas desativados. O token do link fica oculto."
+        },
+        "leads": {
+          "title": "Qualificação de leads",
+          "body": "Estes leads são fictícios. No sistema oficial, quem é aprovado e atinge o score vira cliente qualificado, de forma automática ou manual. Exportar e subir listas está desativado."
+        },
+        "review": {
+          "title": "Fila de revisão",
+          "body": "Aqui a equipe aprova ou reprova casos duvidosos. Nenhum rosto é mostrado, só um espaço reservado. Teste os botões à vontade: nada é salvo."
+        },
+        "simulator": {
+          "title": "Simulador de onboarding",
+          "body": "Mostra o passo a passo do cliente, inclusive a tela que pediria permissão da câmera. É só encenação: o seu navegador nunca é solicitado e nenhuma câmera abre."
+        },
+        "settings": {
+          "title": "Configurações",
+          "body": "A única coisa que você pode mudar é o nome da empresa e a cor. Elas ficam só no seu navegador. Logo e fotos não são aceitos."
+        },
+        "official": {
+          "title": "E no sistema oficial?",
+          "body": "A ideia era fazer prova de vida e conferência de documento por biometria. Como biometria facial e documentos são dados sensíveis pela LGPD, desativei essas partes nesta vitrine. Obrigado por conferir!"
+        }
+      },
+      "language": "Idioma"
+    }
   }
 }

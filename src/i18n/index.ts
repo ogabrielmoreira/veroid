@@ -25,5 +25,7 @@ void i18n
 i18n.on('languageChanged', (lng) => {
   document.documentElement.lang = lng
 })
+// o evento acima não dispara na detecção inicial: sincroniza o <html lang> ao carregar
+if (i18n.language) document.documentElement.lang = i18n.language
 
 export default i18n

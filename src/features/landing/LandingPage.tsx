@@ -1,11 +1,17 @@
+import { lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router'
 import { Logo } from '@/components/Logo'
 import { LanguageToggle } from '@/components/Preferences'
+import { Alert } from '@/components/ui/Alert'
 import { Button, ButtonLink } from '@/components/ui/Button'
 import { Icon, type IconName } from '@/components/ui/Icon'
 import heroBiometric from '@/assets/hero-biometric.webp'
 import { markDemoIntent } from '@/lib/demoIntent'
+import { env } from '@/lib/env'
+
+const LandingPeek = lazy(() => import('./LandingPeek'))
+const DemoInside = lazy(() => import('@/features/demo/DemoCharts').then((m) => ({ default: m.DemoCharts })))
 
 const PILLARS: Array<{ key: 'consent' | 'brand' | 'copilot'; icon: IconName }> = [
   { key: 'consent', icon: 'shield' },
@@ -24,6 +30,7 @@ const CHECKLIST: Array<{ key: 'liveness' | 'biometrics' | 'document'; done: bool
 export function LandingPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const demo = env.maintenance // vitrine: sem criar conta, sem câmera
   return (
     <div data-theme="light" className="min-h-dvh overflow-x-clip bg-[var(--surface-page)]">
       <header className="mx-auto flex max-w-[var(--content-max)] items-center justify-between gap-3 px-[clamp(20px,5vw,64px)] py-5">
@@ -41,7 +48,7 @@ export function LandingPage() {
         </nav>
         <div className="flex items-center gap-2">
           <LanguageToggle />
-          <ButtonLink to="/entrar" variant="ghost" className="hidden sm:inline-flex">{t('auth.signin.submit')}</ButtonLink>
+          <ButtonLink to="/entrar" variant="ghost" className="hidden sm:inline-flex">{demo ? t('landing.demo.ctaGate') : t('auth.signin.submit')}</ButtonLink>
         </div>
       </header>
 
@@ -61,15 +68,27 @@ export function LandingPage() {
               <h1 className="mt-4 text-[clamp(34px,5.4vw,56px)] font-bold leading-[1.02] tracking-[-0.034em] text-[var(--ink)] [text-wrap:balance]">
                 {t('landing.title')}
               </h1>
-              <p className="m-0 mt-5 max-w-[60ch] t-body-lg text-[var(--ink-body)]">{t('landing.lead')}</p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Button iconRight="arrowRight" onClick={() => { markDemoIntent(); navigate('/criar-conta') }}>{t('landing.ctaSignup')}</Button>
-                <ButtonLink to="/demo" variant="secondary" icon="chart">{t('landing.ctaExplore')}</ButtonLink>
-              </div>
-              <p className="m-0 mt-3 t-caption text-[var(--ink-muted)]">
-                {t('landing.ctaSignin')}{' '}
-                <Link to="/entrar" className="font-medium text-[var(--link)] underline-offset-2 hover:underline">{t('auth.signin.submit')}</Link>
-              </p>
+              <p className="m-0 mt-5 max-w-[60ch] t-body-lg text-[var(--ink-body)]">{demo ? t('landing.demo.lead') : t('landing.lead')}</p>
+              {demo ? (
+                <>
+                  <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                    <ButtonLink to="/demo" iconRight="arrowRight" icon="chart">{t('landing.demo.ctaExplore')}</ButtonLink>
+                    <ButtonLink to="/entrar" variant="secondary" icon="lock">{t('landing.demo.ctaGate')}</ButtonLink>
+                  </div>
+                  <Alert variant="warning" title={t('landing.demo.careTitle')} className="mt-6 max-w-[560px]">{t('landing.demo.careBody')}</Alert>
+                </>
+              ) : (
+                <>
+                  <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                    <Button iconRight="arrowRight" onClick={() => { markDemoIntent(); navigate('/criar-conta') }}>{t('landing.ctaSignup')}</Button>
+                    <ButtonLink to="/demo" variant="secondary" icon="chart">{t('landing.ctaExplore')}</ButtonLink>
+                  </div>
+                  <p className="m-0 mt-3 t-caption text-[var(--ink-muted)]">
+                    {t('landing.ctaSignin')}{' '}
+                    <Link to="/entrar" className="font-medium text-[var(--link)] underline-offset-2 hover:underline">{t('auth.signin.submit')}</Link>
+                  </p>
+                </>
+              )}
 
               <figure className="m-0 mt-12 flex max-w-[520px] items-start gap-5 border-l-[3px] border-[var(--brand-500)] pl-5">
                 <p className="m-0 tabular font-display text-[40px] font-bold leading-none tracking-[-0.03em] text-[var(--brand-800)]">
@@ -81,6 +100,11 @@ export function LandingPage() {
               </figure>
             </div>
 
+            {demo ? (
+              <div className="mx-auto w-full max-w-[460px] lg:mx-0 lg:ml-auto">
+                <Suspense fallback={<div className="min-h-[320px]" aria-hidden="true" />}><LandingPeek /></Suspense>
+              </div>
+            ) : (
             <div className="relative mx-auto w-full max-w-[440px] lg:mx-0 lg:ml-auto">
               <div
                 aria-hidden="true"
@@ -131,6 +155,7 @@ export function LandingPage() {
                 </div>
               </div>
             </div>
+            )}
           </div>
 
           <p className="pointer-events-none absolute bottom-0 left-[clamp(20px,5vw,64px)] hidden max-w-[220px] t-overline text-[var(--ink-subtle)] xl:block">
@@ -155,6 +180,16 @@ export function LandingPage() {
             ))}
           </ul>
         </section>
+
+        {demo ? (
+          <section aria-labelledby="inside-h" className="mx-auto flex max-w-[var(--content-max)] flex-col gap-6 px-[clamp(20px,5vw,64px)] py-14">
+            <div>
+              <h2 id="inside-h" className="t-h2">{t('landing.demo.insideTitle')}</h2>
+              <p className="m-0 mt-2 max-w-[64ch] t-body text-[var(--ink-muted)]">{t('landing.demo.insideBody')}</p>
+            </div>
+            <Suspense fallback={<div className="min-h-[400px]" aria-hidden="true" />}><DemoInside /></Suspense>
+          </section>
+        ) : null}
       </main>
 
       <footer className="mx-auto flex max-w-[var(--content-max)] flex-col gap-4 px-[clamp(20px,5vw,64px)] py-10 md:flex-row md:items-start md:justify-between">

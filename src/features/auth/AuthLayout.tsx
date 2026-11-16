@@ -4,6 +4,8 @@ import { Link } from 'react-router'
 import { Logo } from '@/components/Logo'
 import { LanguageToggle } from '@/components/Preferences'
 import { Alert } from '@/components/ui/Alert'
+import { ButtonLink } from '@/components/ui/Button'
+import { Icon } from '@/components/ui/Icon'
 import { env } from '@/lib/env'
 import { CaptureIllustration } from './CaptureIllustration'
 
@@ -12,10 +14,13 @@ interface AuthLayoutProps {
   subtitle?: ReactNode
   children: ReactNode
   footer?: ReactNode
+  /** Tela de senha da demonstração: renderiza o conteúdo mesmo no modo manutenção. */
+  gate?: boolean
 }
 
 /** Painel de autenticação: marca à esquerda (≥900px), formulário à direita. Sempre light. */
-export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
+export function AuthLayout({ title, subtitle, children, footer, gate }: AuthLayoutProps) {
+  const maint = env.maintenance && !gate
   const { t } = useTranslation()
   return (
     <div data-theme="light" className="min-h-dvh bg-[var(--surface-page)] lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
@@ -55,15 +60,29 @@ export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProp
         </header>
         <div className="flex flex-1 items-start justify-center px-5 py-10 sm:px-8 lg:items-center">
           <div className="enter w-full max-w-[400px]">
-            {!env.isConfigured ? (
+            {!env.isConfigured && !env.maintenance ? (
               <Alert variant="warning" title={t('errors.notConfiguredTitle')} className="mb-6">
                 {t('errors.notConfiguredBody')}
               </Alert>
             ) : null}
-            <h1 className="t-h1">{title}</h1>
-            {subtitle ? <p className="mt-2 mb-0 t-body text-[var(--ink-muted)]">{subtitle}</p> : null}
-            <div className="mt-8">{children}</div>
-            {footer ? <div className="mt-8 border-t border-[var(--divider)] pt-6 t-body text-[var(--ink-muted)]">{footer}</div> : null}
+            {maint ? (
+              <div className="flex flex-col items-start gap-4" role="status">
+                <span className="grid size-12 place-items-center rounded-full bg-[var(--brand-50)] text-[var(--brand-600)]"><Icon name="settings" size={24} /></span>
+                <h1 className="t-h1">{t('maintenance.title')}</h1>
+                <p className="m-0 t-body text-[var(--ink-muted)]">{t('maintenance.body')}</p>
+                <p className="m-0 t-body font-medium text-[var(--ink)]">{t('maintenance.noLogin')}</p>
+                <ButtonLink to="/demo" icon="chart" className="mt-2">{t('maintenance.cta')}</ButtonLink>
+                <ButtonLink to="/entrar" variant="secondary" icon="lock">{t('maintenance.gateCta')}</ButtonLink>
+                <Link to="/" className="t-body font-medium text-[var(--link)] underline-offset-2 hover:underline">{t('maintenance.back')}</Link>
+              </div>
+            ) : (
+              <>
+                <h1 className="t-h1">{title}</h1>
+                {subtitle ? <p className="mt-2 mb-0 t-body text-[var(--ink-muted)]">{subtitle}</p> : null}
+                <div className="mt-8">{children}</div>
+              </>
+            )}
+            {!maint && footer ? <div className="mt-8 border-t border-[var(--divider)] pt-6 t-body text-[var(--ink-muted)]">{footer}</div> : null}
           </div>
         </div>
         <p className="m-0 px-5 pb-6 text-center t-caption text-[var(--ink-muted)] lg:hidden">{t('honesty')}</p>
