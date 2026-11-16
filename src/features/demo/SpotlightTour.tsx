@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LangPicker } from '@/components/LangPicker'
 import { LottieIcon } from '@/components/LottieIcon'
 import { Button } from '@/components/ui/Button'
 
@@ -116,8 +115,7 @@ export function SpotlightTour({ steps, index, onIndex, onFinish }: {
           {steps.map((_, i) => <span key={i} className="h-1.5 rounded-full transition-all duration-300" style={{ width: i === index ? 22 : 6, background: i <= index ? 'var(--brand-500)' : 'var(--n-200)' }} />)}
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--divider)] pt-3">
-          <LangPicker />
+        <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[var(--divider)] pt-3">
           <div className="flex items-center gap-2">
             <Button variant="ghost" disabled={index === 0} onClick={() => onIndex(index - 1)}>{t('demoApp.tour.back')}</Button>
             <Button ref={nextRef} iconRight={last ? 'check' : 'arrowRight'} onClick={() => (last ? onFinish() : onIndex(index + 1))}>

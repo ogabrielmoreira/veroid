@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LangPicker } from '@/components/LangPicker'
 import { Logo } from '@/components/Logo'
 import { Button } from '@/components/ui/Button'
 import { Chip, type ChipTone } from '@/components/ui/Chip'
@@ -91,7 +90,6 @@ export function DemoWorkspace() {
         {nav}
         <div className="mt-auto flex flex-col gap-3">
           <Button variant="secondary" icon="help" onClick={restart} block>{t('demoApp.tour.restart')}</Button>
-          <LangPicker className="flex-wrap" />
           <p className="m-0 text-[11px] leading-4 text-[var(--ink-subtle)]">{t('demoApp.credits')}</p>
         </div>
       </aside>
@@ -99,7 +97,6 @@ export function DemoWorkspace() {
       {/* barra superior + gaveta (celular/tablet) */}
       <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--surface)]/95 px-4 py-2.5 backdrop-blur lg:hidden">
         <div className="flex items-center gap-3"><button type="button" aria-label={t('demoApp.menu')} aria-expanded={drawer} onClick={() => setDrawer(true)} className="grid size-11 place-items-center rounded-full hover:bg-[var(--n-100)]"><Icon name="dashboard" size={24} /></button><Logo /></div>
-        <LangPicker />
       </header>
       {drawer ? (
         <div className="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true" aria-label={t('demoApp.menu')}>

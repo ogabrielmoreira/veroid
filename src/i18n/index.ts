@@ -9,7 +9,8 @@ void i18n
   .use(initReactI18next)
   .init({
     resources: { 'pt-BR': { translation: ptBR }, en: { translation: en } },
-    fallbackLng: 'pt-BR',
+    lng: 'en', // vitrine 100% em inglês; os textos em pt-BR continuam no repositório
+    fallbackLng: 'en',
     supportedLngs: ['pt-BR', 'en'],
     nonExplicitSupportedLngs: false,
     load: 'currentOnly',
