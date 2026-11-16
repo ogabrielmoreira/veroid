@@ -1511,9 +1511,26 @@
         "official": {
           "title": "E no sistema oficial?",
           "body": "A ideia era fazer prova de vida e conferência de documento por biometria. Como biometria facial e documentos são dados sensíveis pela LGPD, desativei essas partes nesta vitrine. Obrigado por conferir!"
+        },
+        "nav": {
+          "title": "O menu do sistema",
+          "body": "É por aqui que a equipe da empresa navega: painel, links, leads, fila de revisão, simulador e configurações."
+        },
+        "linksForm": {
+          "title": "Gerar um link",
+          "body": "No sistema oficial você cria um link único para cada cliente. Aqui dá para gerar um de mentira, com apelido e validade."
+        },
+        "linksOff": {
+          "title": "Envio desativado",
+          "body": "WhatsApp, SMS, e-mail e QR Code ficam visíveis para mostrar o que o produto faz, mas desativados nesta demonstração. O token do link fica sempre oculto."
         }
       },
       "language": "Idioma"
-    }
+    },
+    "tenant": "Demonstração",
+    "menu": "Abrir menu",
+    "menuClose": "Fechar menu",
+    "strip": "Sem câmera, sem fotos, sem documentos e sem envio de dados: tudo aqui é fictício e roda só no seu navegador.",
+    "credits": "Animações: Noto Emoji © Google (CC BY 4.0). Ícones: Material Symbols © Google (Apache 2.0). Fontes: Bricolage Grotesque e Figtree (SIL OFL)."
   }
 }

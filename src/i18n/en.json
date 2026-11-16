@@ -1511,9 +1511,26 @@
         "official": {
           "title": "And the official system?",
           "body": "The idea was to do liveness and document checks through biometrics. Since facial biometrics and documents are sensitive data under LGPD, I switched those parts off in this showcase. Thanks for checking it out!"
+        },
+        "nav": {
+          "title": "The system menu",
+          "body": "This is how the company's team navigates: dashboard, links, leads, review queue, simulator and settings."
+        },
+        "linksForm": {
+          "title": "Generate a link",
+          "body": "In the official system you create a unique link for each customer. Here you can generate a fake one, with a nickname and validity."
+        },
+        "linksOff": {
+          "title": "Sending is disabled",
+          "body": "WhatsApp, SMS, email and QR Code stay visible to show what the product does, but are disabled in this demo. The link token is always hidden."
         }
       },
       "language": "Language"
-    }
+    },
+    "tenant": "Demo",
+    "menu": "Open menu",
+    "menuClose": "Close menu",
+    "strip": "No camera, no photos, no documents and no data sent: everything here is fictional and runs only in your browser.",
+    "credits": "Animations: Noto Emoji © Google (CC BY 4.0). Icons: Material Symbols © Google (Apache 2.0). Fonts: Bricolage Grotesque and Figtree (SIL OFL)."
   }
 }

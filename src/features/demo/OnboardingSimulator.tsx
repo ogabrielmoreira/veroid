@@ -74,7 +74,7 @@ export function OnboardingSimulator({ name }: { name: string }) {
   return (
     <div className="grid items-start gap-8 lg:grid-cols-[auto_minmax(0,1fr)]">
       <style>{CSS}</style>
-      <div className="relative mx-auto w-[290px] overflow-hidden rounded-[34px] border-[9px] border-[#14162B] bg-[#14162B] shadow-[var(--shadow-modal)]" style={{ aspectRatio: '9/18' }}>
+      <div data-tour="phone" className="relative mx-auto w-[290px] overflow-hidden rounded-[34px] border-[9px] border-[#14162B] bg-[#14162B] shadow-[var(--shadow-modal)]" style={{ aspectRatio: '9/18' }}>
         <span className="absolute left-1/2 top-1.5 z-10 h-1.5 w-14 -translate-x-1/2 rounded-full bg-black/60" aria-hidden="true" />
         <div className="relative flex size-full flex-col items-center gap-4 rounded-[24px] bg-white p-5 pt-8 text-center text-[#10142B]" aria-live="polite">
           {screen === 'splash' ? (

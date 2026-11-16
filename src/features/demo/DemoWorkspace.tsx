@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Logo } from '@/components/Logo'
 import { LangPicker } from '@/components/LangPicker'
-import { Alert } from '@/components/ui/Alert'
+import { Logo } from '@/components/Logo'
 import { Button } from '@/components/ui/Button'
 import { Chip, type ChipTone } from '@/components/ui/Chip'
 import { InputField } from '@/components/ui/Field'
@@ -11,7 +10,7 @@ import { brandCssVars } from '@/lib/brand'
 import { checkContrast, formatRatio, normalizeHex } from '@/lib/color'
 import { DemoCharts } from './DemoCharts'
 import { OnboardingSimulator } from './OnboardingSimulator'
-import { MandatoryTour, type TourStep } from './MandatoryTour'
+import { SpotlightTour, type TourStep } from './SpotlightTour'
 
 /**
  * Portal de demonstração do Vero ID. Tudo aqui é fictício e roda só no navegador:
@@ -21,13 +20,20 @@ import { MandatoryTour, type TourStep } from './MandatoryTour'
 type Tab = 'overview' | 'links' | 'leads' | 'review' | 'simulator' | 'settings'
 
 const TABS: Array<{ k: Tab; icon: IconName }> = [
-  { k: 'overview', icon: 'home' }, { k: 'links', icon: 'link' }, { k: 'leads', icon: 'users' },
-  { k: 'review', icon: 'evidence' }, { k: 'simulator', icon: 'capture' }, { k: 'settings', icon: 'settings' },
+  { k: 'overview', icon: 'dashboard' }, { k: 'links', icon: 'link' }, { k: 'leads', icon: 'personSearch' },
+  { k: 'review', icon: 'factCheck' }, { k: 'simulator', icon: 'phone' }, { k: 'settings', icon: 'settings' },
 ]
 const TOUR: TourStep[] = [
-  { key: 'welcome', tab: 'overview' }, { key: 'overview', tab: 'overview' }, { key: 'links', tab: 'links' },
-  { key: 'leads', tab: 'leads' }, { key: 'review', tab: 'review' }, { key: 'simulator', tab: 'simulator' },
-  { key: 'settings', tab: 'settings' }, { key: 'official', tab: 'overview' },
+  { key: 'welcome', tab: 'overview', lottie: 'wave' },
+  { key: 'nav', tab: 'overview', target: 'nav', lottie: 'bulb' },
+  { key: 'overview', tab: 'overview', target: 'kpis', lottie: 'chart' },
+  { key: 'linksForm', tab: 'links', target: 'link-form', lottie: 'bulb' },
+  { key: 'linksOff', tab: 'links', target: 'send-off', lottie: 'lock' },
+  { key: 'leads', tab: 'leads', target: 'leads', lottie: 'bulb' },
+  { key: 'review', tab: 'review', target: 'review', lottie: 'check' },
+  { key: 'simulator', tab: 'simulator', target: 'phone', lottie: 'rocket' },
+  { key: 'settings', tab: 'settings', target: 'settings', lottie: 'party' },
+  { key: 'official', tab: 'overview', lottie: 'lock' },
 ]
 
 const LS_NAME = 'veroid.demo.name'
@@ -36,9 +42,12 @@ const SS_TOUR = 'veroid.demo.tourDone'
 const read = (k: string, fb: string, s = localStorage) => { try { return s.getItem(k) ?? fb } catch { return fb } }
 const write = (k: string, v: string, s = localStorage) => { try { s.setItem(k, v) } catch { /* modo privado */ } }
 
+const initialsOf = (n: string) => n.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase() || '•'
+
 export function DemoWorkspace() {
   const { t } = useTranslation()
   const [tab, setTab] = useState<Tab>('overview')
+  const [drawer, setDrawer] = useState(false)
   const [name, setName] = useState(() => read(LS_NAME, 'Lorem Ipsum S.A.'))
   const [color, setColor] = useState(() => read(LS_COLOR, '#3F4FB8'))
   const [tourOpen, setTourOpen] = useState(() => read(SS_TOUR, '', sessionStorage) !== '1')
@@ -46,53 +55,86 @@ export function DemoWorkspace() {
 
   useEffect(() => { write(LS_NAME, name) }, [name])
   useEffect(() => { write(LS_COLOR, color) }, [color])
+  useEffect(() => {
+    if (!drawer) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setDrawer(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [drawer])
   const vars = useMemo(() => brandCssVars({ primary: normalizeHex(color) ?? '#3F4FB8', accent: normalizeHex(color) ?? '#3F4FB8' }), [color])
 
   const goTour = (i: number) => { setTourIdx(i); const tb = TOUR[i].tab as Tab | undefined; if (tb) setTab(tb) }
   const finishTour = () => { write(SS_TOUR, '1', sessionStorage); setTourOpen(false); setTab('overview') }
-  const restart = () => { goTour(0); setTourOpen(true) }
+  const restart = () => { setDrawer(false); goTour(0); setTourOpen(true) }
+  const pick = (k: Tab) => { setTab(k); setDrawer(false) }
+
+  const nav = (
+    <nav aria-label={t('demoApp.title')} className="flex flex-col gap-1">
+      {TABS.map(({ k, icon }) => (
+        <button key={k} type="button" aria-current={tab === k ? 'page' : undefined} onClick={() => pick(k)}
+          className={`group relative flex min-h-12 items-center gap-3 rounded-[14px] px-3.5 text-left text-[15px] font-medium transition-colors ${tab === k ? 'bg-[var(--brand-600)] text-white' : 'text-[var(--ink-body)] hover:bg-[var(--n-100)]'}`}>
+          <Icon name={icon} size={20} />{t(`demoApp.tabs.${k}`)}
+        </button>
+      ))}
+    </nav>
+  )
 
   return (
-    <div data-theme="light" style={vars} className="min-h-dvh bg-[var(--surface-page)]">
-      <header className="mx-auto flex max-w-[var(--content-max)] items-center justify-between gap-3 px-[clamp(20px,5vw,64px)] py-5">
-        <div className="flex items-center gap-3">
-          <Logo />
-          <span className="hidden border-l border-[var(--divider)] pl-3 t-label text-[var(--ink-muted)] sm:inline">{name}</span>
+    <div data-theme="light" style={{ ...vars, ['--surface-page' as string]: '#F4F3EF' }} className="min-h-dvh bg-[var(--surface-page)] lg:grid lg:grid-cols-[272px_minmax(0,1fr)]">
+      {/* menu lateral (desktop) */}
+      <aside data-tour="nav" className="sticky top-0 hidden h-dvh flex-col gap-6 border-r border-[var(--border)] bg-[var(--surface)] p-5 lg:flex">
+        <Logo />
+        <div className="flex items-center gap-3 rounded-[14px] bg-[var(--n-50)] p-3">
+          <span className="grid size-10 shrink-0 place-items-center rounded-[12px] font-display text-[15px] font-bold text-white" style={{ background: 'var(--brand-600)' }} aria-hidden="true">{initialsOf(name)}</span>
+          <span className="min-w-0"><span className="block truncate text-[14px] font-semibold text-[var(--ink)]">{name}</span><span className="block t-caption text-[var(--ink-muted)]">{t('demoApp.tenant')}</span></span>
         </div>
-        <nav className="flex items-center gap-2">
-          <LangPicker />
-          <Button variant="ghost" icon="info" onClick={restart}>{t('demoApp.tour.restart')}</Button>
-        </nav>
+        {nav}
+        <div className="mt-auto flex flex-col gap-3">
+          <Button variant="secondary" icon="help" onClick={restart} block>{t('demoApp.tour.restart')}</Button>
+          <LangPicker className="flex-wrap" />
+          <p className="m-0 text-[11px] leading-4 text-[var(--ink-subtle)]">{t('demoApp.credits')}</p>
+        </div>
+      </aside>
+
+      {/* barra superior + gaveta (celular/tablet) */}
+      <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--surface)]/95 px-4 py-2.5 backdrop-blur lg:hidden">
+        <div className="flex items-center gap-3"><button type="button" aria-label={t('demoApp.menu')} aria-expanded={drawer} onClick={() => setDrawer(true)} className="grid size-11 place-items-center rounded-full hover:bg-[var(--n-100)]"><Icon name="dashboard" size={24} /></button><Logo /></div>
+        <LangPicker />
       </header>
-
-      <main id="main" className="mx-auto flex max-w-[var(--content-max)] flex-col gap-6 px-[clamp(20px,5vw,64px)] pb-16">
-        <Alert variant="info" title={t('demoApp.safeTitle')}>{t('demoApp.safeBody')}</Alert>
-
-        <div role="tablist" aria-label={t('demoApp.title')} className="flex flex-wrap gap-1 border-b border-[var(--divider)]">
-          {TABS.map(({ k, icon }) => (
-            <button key={k} role="tab" type="button" aria-selected={tab === k} onClick={() => setTab(k)}
-              className={`inline-flex min-h-11 items-center gap-2 border-b-2 px-3 t-label ${tab === k ? 'border-[var(--brand-600)] text-[var(--brand-700)]' : 'border-transparent text-[var(--ink-muted)] hover:text-[var(--ink)]'}`}>
-              <Icon name={icon} size={18} />{t(`demoApp.tabs.${k}`)}
-            </button>
-          ))}
+      {drawer ? (
+        <div className="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true" aria-label={t('demoApp.menu')}>
+          <button type="button" aria-label={t('demoApp.menuClose')} className="absolute inset-0 bg-black/45" onClick={() => setDrawer(false)} />
+          <div className="absolute inset-y-0 left-0 flex w-[min(320px,86vw)] flex-col gap-5 bg-[var(--surface)] p-5 shadow-[var(--shadow-modal)]">
+            <div className="flex items-center justify-between"><Logo /><button type="button" aria-label={t('demoApp.menuClose')} onClick={() => setDrawer(false)} className="grid size-11 place-items-center rounded-full hover:bg-[var(--n-100)]"><Icon name="close" size={24} /></button></div>
+            {nav}
+            <div className="mt-auto flex flex-col gap-3"><Button variant="secondary" icon="help" onClick={restart} block>{t('demoApp.tour.restart')}</Button><p className="m-0 text-[11px] leading-4 text-[var(--ink-subtle)]">{t('demoApp.credits')}</p></div>
+          </div>
         </div>
+      ) : null}
 
-        {tab === 'overview' ? <><SectionNote k="overview" /><DemoCharts /></> : null}
-        {tab === 'links' ? <LinksTab /> : null}
-        {tab === 'leads' ? <LeadsTab /> : null}
-        {tab === 'review' ? <ReviewTab /> : null}
-        {tab === 'simulator' ? <SimulatorTab name={name} /> : null}
-        {tab === 'settings' ? <SettingsTab name={name} setName={setName} color={color} setColor={setColor} /> : null}
-      </main>
+      <div className="min-w-0">
+        <div data-tour="notice" className="flex items-start gap-3 bg-[var(--brand-900)] px-[clamp(16px,4vw,48px)] py-3 text-white">
+          <Icon name="shield" size={20} className="mt-0.5 shrink-0 text-[#9FE8C2]" />
+          <p className="m-0 text-[13px] leading-5"><strong className="font-semibold">{t('demoApp.safeTitle')}.</strong> {t('demoApp.strip')}</p>
+        </div>
+        <main id="main" className="mx-auto flex max-w-[1120px] flex-col gap-6 px-[clamp(16px,4vw,48px)] py-8 pb-16">
+          <header className="flex flex-col gap-1.5">
+            <h1 className="m-0 font-display text-[clamp(26px,3.4vw,34px)] font-bold leading-[1.1] tracking-[-0.03em]">{t(`demoApp.tabs.${tab}`)}</h1>
+            <p className="m-0 max-w-[68ch] t-body-lg text-[var(--ink-muted)]">{t(`demoApp.notes.${tab}`)}</p>
+          </header>
 
-      {tourOpen ? <MandatoryTour steps={TOUR} index={tourIdx} onIndex={goTour} onFinish={finishTour} /> : null}
+          {tab === 'overview' ? <DemoCharts /> : null}
+          {tab === 'links' ? <LinksTab /> : null}
+          {tab === 'leads' ? <LeadsTab /> : null}
+          {tab === 'review' ? <ReviewTab /> : null}
+          {tab === 'simulator' ? <SimulatorTab name={name} /> : null}
+          {tab === 'settings' ? <SettingsTab name={name} setName={setName} color={color} setColor={setColor} /> : null}
+        </main>
+      </div>
+
+      {tourOpen ? <SpotlightTour steps={TOUR} index={tourIdx} onIndex={goTour} onFinish={finishTour} /> : null}
     </div>
   )
-}
-
-function SectionNote({ k }: { k: string }) {
-  const { t } = useTranslation()
-  return <p className="m-0 max-w-[80ch] t-body text-[var(--ink-muted)]">{t(`demoApp.notes.${k}`)}</p>
 }
 
 /** Botão desativado com motivo visível (não só tooltip). */
@@ -124,9 +166,8 @@ function LinksTab() {
   }
   return (
     <section className="flex flex-col gap-5">
-      <SectionNote k="links" />
       <div className="grid gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
-        <form onSubmit={create} className="flex h-fit flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-raised)] p-[22px]">
+        <form data-tour="link-form" onSubmit={create} className="flex h-fit flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-raised)] p-[22px]">
           <h2 className="font-sans text-[15px] font-semibold text-[var(--ink)]">{t('demoApp.links.new')}</h2>
           <InputField id="lk-label" label={t('demoApp.links.label')} help={t('demoApp.links.labelHelp')} value={label} maxLength={40} onChange={(e) => setLabel(e.target.value)} autoComplete="off" />
           <div className="flex flex-col gap-1.5">
@@ -136,7 +177,7 @@ function LinksTab() {
             </select>
           </div>
           <Button type="submit" icon="link">{t('demoApp.links.generate')}</Button>
-          <div className="flex flex-col gap-2 border-t border-[var(--divider)] pt-4">
+          <div data-tour="send-off" className="flex flex-col gap-2 border-t border-[var(--divider)] pt-4">
             <p className="m-0 t-label text-[var(--ink)]">{t('demoApp.links.sendVia')} <OffBadge /></p>
             <div className="flex flex-wrap gap-2">
               <Off icon="chat">WhatsApp</Off><Off icon="signal">SMS</Off><Off icon="mail">E-mail</Off><Off icon="qr">QR Code</Off>
@@ -150,7 +191,7 @@ function LinksTab() {
             <div className="flex flex-wrap gap-2"><Off icon="plus">{t('demoApp.links.batch')}</Off><Off icon="export">{t('demoApp.links.export')}</Off></div>
           </div>
           {links.map((l) => (
-            <article key={l.id} className="flex flex-wrap items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-raised)] p-4">
+            <article key={l.id} className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-raised)] p-4">
               <div className="min-w-0 flex-1">
                 <p className="m-0 flex flex-wrap items-center gap-2 font-semibold text-[var(--ink)]">{l.label} <Chip tone="neutral" icon="info">{t('demoApp.links.simulated')}</Chip></p>
                 <p className="m-0 mt-1 font-mono text-[12px] text-[var(--ink-muted)]" aria-label={t('demoApp.links.tokenHidden')}>…/v/{maskToken()}</p>
@@ -182,9 +223,8 @@ function LeadsTab() {
   const { t } = useTranslation()
   return (
     <section className="flex flex-col gap-4">
-      <SectionNote k="leads" />
       <div className="flex flex-wrap gap-2"><Off icon="export">{t('demoApp.leads.export')}</Off><Off icon="plus">{t('demoApp.leads.import')}</Off></div>
-      <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-raised)]">
+      <div data-tour="leads" className="overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-raised)]">
         <table className="w-full min-w-[640px] border-collapse text-left text-[14px]">
           <caption className="sr-only">{t('demoApp.tabs.leads')}</caption>
           <thead><tr className="border-b border-[var(--divider)] t-overline text-[var(--ink-muted)]">
@@ -223,8 +263,7 @@ function ReviewTab() {
   const d = dec[sel] ?? 'pending'
   return (
     <section className="flex flex-col gap-4">
-      <SectionNote k="review" />
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+      <div data-tour="review" className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         <ul className="m-0 flex list-none flex-col gap-2 p-0">
           {REVIEW.map((r) => {
             const rd = dec[r.id] ?? 'pending'
@@ -268,7 +307,6 @@ function ReviewTab() {
 function SimulatorTab({ name }: { name: string }) {
   return (
     <section className="flex flex-col gap-5">
-      <SectionNote k="simulator" />
       <OnboardingSimulator name={name} />
     </section>
   )
@@ -281,8 +319,7 @@ function SettingsTab({ name, setName, color, setColor }: { name: string; setName
   const check = checkContrast(c, '#FFFFFF')
   return (
     <section className="flex flex-col gap-4">
-      <SectionNote k="settings" />
-      <div className="flex max-w-[460px] flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-raised)] p-[22px]">
+      <div data-tour="settings" className="flex max-w-[460px] flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-raised)] p-[22px]">
         <InputField id="br-name" label={t('demoApp.settings.name')} value={name} maxLength={40} onChange={(e) => setName(e.target.value)} autoComplete="off" />
         <div className="flex flex-col gap-1.5">
           <label htmlFor="br-color" className="t-label text-[var(--ink)]">{t('demoApp.settings.color')}</label>
