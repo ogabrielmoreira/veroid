@@ -79,7 +79,7 @@ export function DemoWorkspace() {
   )
 
   return (
-    <div data-theme="light" style={{ ...vars, ['--surface-page' as string]: '#F4F3EF', ['--font-display' as string]: "'Bricolage Grotesque', system-ui, sans-serif", ['--font-text' as string]: "'Figtree', system-ui, sans-serif" }} className="min-h-dvh bg-[var(--surface-page)] lg:grid lg:grid-cols-[272px_minmax(0,1fr)]">
+    <div data-theme="light" style={{ ...vars, ['--surface-page' as string]: '#F4F3EF' }} className="min-h-dvh bg-[var(--surface-page)] lg:grid lg:grid-cols-[272px_minmax(0,1fr)]">
       {/* menu lateral (desktop) */}
       <aside data-tour="nav" className="sticky top-0 hidden h-dvh flex-col gap-6 border-r border-[var(--border)] bg-[var(--surface)] p-5 lg:flex">
         <Logo />

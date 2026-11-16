@@ -1417,14 +1417,19 @@
       },
       "cam": {
         "title": "Prova de vida",
-        "cancel": "Cancelar",
         "steps": {
-          "find": "Posicione o rosto no centro",
+          "find": "Posicione o rosto dentro do oval",
           "blink": "Pisque os olhos",
           "turn": "Vire a cabeça devagar",
-          "done": "Tudo certo"
+          "done": "Pronto! Prova de vida confirmada"
         },
-        "hint": "Ilustração: nenhuma câmera está ativa."
+        "hint": "Ilustração · nenhuma câmera está ativa",
+        "chips": {
+          "find": "Rosto",
+          "blink": "Piscar",
+          "turn": "Virar"
+        },
+        "auto": "A verificação acontece sozinha: é só seguir a instrução."
       },
       "doc": {
         "title": "Documento",
@@ -1544,6 +1549,6 @@
     "menu": "Abrir menu",
     "menuClose": "Fechar menu",
     "strip": "Sem câmera, sem fotos, sem documentos e sem envio de dados: tudo aqui é fictício e roda só no seu navegador.",
-    "credits": "Animações: Noto Emoji © Google (CC BY 4.0). Ícones: Material Symbols © Google (Apache 2.0). Fontes: Bricolage Grotesque e Figtree (SIL OFL)."
+    "credits": "Animações: Noto Emoji © Google (CC BY 4.0). Ícones: Material Symbols © Google (Apache 2.0). Fontes: Libre Franklin e Geist (SIL OFL)."
   }
 }

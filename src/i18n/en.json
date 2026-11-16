@@ -1417,14 +1417,19 @@
       },
       "cam": {
         "title": "Liveness check",
-        "cancel": "Cancel",
         "steps": {
-          "find": "Position your face in the center",
+          "find": "Place your face inside the oval",
           "blink": "Blink your eyes",
           "turn": "Slowly turn your head",
-          "done": "All set"
+          "done": "Done! Liveness confirmed"
         },
-        "hint": "Illustration: no camera is active."
+        "hint": "Illustration · no camera is active",
+        "chips": {
+          "find": "Face",
+          "blink": "Blink",
+          "turn": "Turn"
+        },
+        "auto": "The check runs by itself: just follow the instruction."
       },
       "doc": {
         "title": "Document",
@@ -1544,6 +1549,6 @@
     "menu": "Open menu",
     "menuClose": "Close menu",
     "strip": "No camera, no photos, no documents and no data sent: everything here is fictional and runs only in your browser.",
-    "credits": "Animations: Noto Emoji © Google (CC BY 4.0). Icons: Material Symbols © Google (Apache 2.0). Fonts: Bricolage Grotesque and Figtree (SIL OFL)."
+    "credits": "Animations: Noto Emoji © Google (CC BY 4.0). Icons: Material Symbols © Google (Apache 2.0). Fonts: Libre Franklin and Geist (SIL OFL)."
   }
 }

@@ -23,7 +23,7 @@ export function fakeHost(name: string) {
 const SCALE = 0.8
 const W = 393, H = 852, BEZEL = 12
 const SF = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif'
-const BLUE = '#007AFF', GREEN = '#34C759', SEP = 'rgba(60,60,67,.29)', SECOND = 'rgba(60,60,67,.6)'
+const BLUE = '#007AFF', SEP = 'rgba(60,60,67,.29)'
 
 export function OnboardingSimulator({ name }: { name: string }) {
   const { t } = useTranslation()
@@ -58,14 +58,30 @@ export function OnboardingSimulator({ name }: { name: string }) {
   const dark = screen === 'cam'
   const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase() || '•'
 
+  // A página dentro do Safari segue o design system da Vero ID (tokens var(--...)); só a moldura do iPhone, o Safari e o alerta são iOS.
   const Primary = ({ children, onClick }: { children: ReactNode; onClick: () => void }) => (
-    <button type="button" onClick={onClick} style={{ height: 50, borderRadius: 14, background: 'var(--brand-600)', color: '#fff', fontSize: 17, fontWeight: 600, width: '100%' }}>{children}</button>
+    <button type="button" onClick={onClick} className="w-full font-semibold text-white" style={{ height: 52, borderRadius: 12, background: 'var(--brand-600)', fontSize: 16, fontFamily: 'var(--font-text)' }}>{children}</button>
   )
   const Tick = ({ done, active }: { done: boolean; active: boolean }) => (
-    <span style={{ width: 22, height: 22, borderRadius: 11, display: 'grid', placeItems: 'center', background: done ? GREEN : 'transparent', border: done ? 'none' : `1.5px solid ${active ? BLUE : '#C7C7CC'}`, color: '#fff' }}>
+    <span style={{ width: 22, height: 22, borderRadius: 11, display: 'grid', placeItems: 'center', background: done ? 'var(--risk-low)' : 'transparent', border: done ? 'none' : `1.5px solid ${active ? 'var(--brand-500)' : 'var(--n-300)'}` }}>
       {done ? <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg> : null}
     </span>
   )
+  const Title = ({ children }: { children: ReactNode }) => <h3 style={{ margin: '24px 0 8px', fontFamily: 'var(--font-display)', fontSize: 30, fontWeight: 700, lineHeight: '34px', letterSpacing: '-0.025em', color: 'var(--ink)' }}>{children}</h3>
+  const Body = ({ children }: { children: ReactNode }) => <p style={{ margin: 0, fontSize: 16, lineHeight: '24px', color: 'var(--ink-body)' }}>{children}</p>
+  const Small = ({ children }: { children: ReactNode }) => <p style={{ margin: '14px 0 0', fontSize: 13, lineHeight: '18px', color: 'var(--ink-muted)' }}>{children}</p>
+  const Badge = ({ icon, tone }: { icon: IconName; tone: 'brand' | 'low' | 'neutral' }) => (
+    <div style={{ marginTop: 28, display: 'grid', placeItems: 'center', width: 72, height: 72, borderRadius: 36, background: tone === 'low' ? 'var(--risk-low-bg)' : tone === 'brand' ? 'var(--brand-50)' : 'var(--n-100)', color: tone === 'low' ? 'var(--risk-low)' : tone === 'brand' ? 'var(--brand-600)' : 'var(--n-600)' }}><Icon name={icon} size={30} /></div>
+  )
+
+  const chip = (i: number, label: string) => {
+    const done = phase > i, active = phase === i
+    return (
+      <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, height: 32, padding: '0 12px', borderRadius: 999, fontSize: 13, fontWeight: 500, background: done ? 'var(--risk-low-bg)' : active ? 'var(--brand-50)' : 'var(--n-100)', color: done ? 'var(--risk-low-ink)' : active ? 'var(--brand-700)' : 'var(--n-600)' }}>
+        {done ? <Icon name="check" size={16} /> : null}{label}
+      </span>
+    )
+  }
 
   const content = () => {
     switch (screen) {
@@ -73,14 +89,14 @@ export function OnboardingSimulator({ name }: { name: string }) {
         return (
           <Page>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--brand-600)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 16, fontWeight: 700 }}>{initials}</div>
-              <span style={{ fontSize: 17, fontWeight: 600 }}>{name}</span>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--brand-600)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 16, fontWeight: 700, fontFamily: 'var(--font-display)' }}>{initials}</div>
+              <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--ink)' }}>{name}</span>
             </div>
-            <h3 style={{ margin: '28px 0 8px', fontSize: 34, fontWeight: 700, lineHeight: '41px', letterSpacing: '.01em' }}>{t('demoApp.sim.welcome.title')}</h3>
-            <p style={{ margin: 0, fontSize: 17, lineHeight: '22px', color: SECOND }}>{t('demoApp.sim.welcome.body', { org: name })}</p>
-            <ul style={{ listStyle: 'none', margin: '24px 0 0', padding: 0, background: '#fff', borderRadius: 12 }}>
+            <Title>{t('demoApp.sim.welcome.title')}</Title>
+            <Body>{t('demoApp.sim.welcome.body', { org: name })}</Body>
+            <ul style={{ listStyle: 'none', margin: '24px 0 0', padding: 0, border: '1px solid var(--border)', borderRadius: 12, background: '#fff' }}>
               {(['b1', 'b2', 'b3'] as const).map((k, i) => (
-                <li key={k} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '12px 16px', borderTop: i ? `0.5px solid ${SEP}` : 'none', fontSize: 17 }}><span style={{ color: 'var(--brand-600)' }}><Icon name={(['liveness', 'contract', 'shield'] as IconName[])[i]} size={24} /></span>{t(`demoApp.sim.welcome.${k}`)}</li>
+                <li key={k} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '14px 16px', borderTop: i ? '1px solid var(--divider)' : 'none', fontSize: 15, color: 'var(--ink)' }}><span style={{ color: 'var(--brand-600)' }}><Icon name={(['liveness', 'contract', 'shield'] as IconName[])[i]} size={24} /></span>{t(`demoApp.sim.welcome.${k}`)}</li>
               ))}
             </ul>
             <Bottom><Primary onClick={() => { push('consent_shown'); go('pre') }}>{t('demoApp.sim.welcome.cta')}</Primary></Bottom>
@@ -90,55 +106,71 @@ export function OnboardingSimulator({ name }: { name: string }) {
       case 'alert':
         return (
           <Page>
-            <div style={{ marginTop: 40, display: 'grid', placeItems: 'center', width: 88, height: 88, borderRadius: 44, background: 'rgba(0,122,255,.12)', color: BLUE }}><Icon name="capture" size={30} /></div>
-            <h3 style={{ margin: '24px 0 8px', fontSize: 28, fontWeight: 700, lineHeight: '34px' }}>{t('demoApp.sim.pre.title')}</h3>
-            <p style={{ margin: 0, fontSize: 17, lineHeight: '22px', color: SECOND }}>{t('demoApp.sim.pre.body')}</p>
-            <p style={{ margin: '16px 0 0', fontSize: 13, lineHeight: '18px', color: SECOND }}>{t('demoApp.sim.pre.demo')}</p>
+            <Badge icon="capture" tone="brand" />
+            <Title>{t('demoApp.sim.pre.title')}</Title>
+            <Body>{t('demoApp.sim.pre.body')}</Body>
+            <Small>{t('demoApp.sim.pre.demo')}</Small>
             <Bottom><Primary onClick={() => { push('permission_prompt'); setScreen('alert') }}>{t('demoApp.sim.pre.cta')}</Primary></Bottom>
           </Page>
         )
       case 'denied':
         return (
           <Page>
-            <div style={{ marginTop: 40, display: 'grid', placeItems: 'center', width: 88, height: 88, borderRadius: 44, background: 'rgba(60,60,67,.1)', color: SECOND }}><Icon name="cameraOff" size={30} /></div>
-            <h3 style={{ margin: '24px 0 8px', fontSize: 28, fontWeight: 700, lineHeight: '34px' }}>{t('demoApp.sim.denied.title')}</h3>
-            <p style={{ margin: 0, fontSize: 17, lineHeight: '22px', color: SECOND }}>{t('demoApp.sim.denied.text')}</p>
+            <Badge icon="cameraOff" tone="neutral" />
+            <Title>{t('demoApp.sim.denied.title')}</Title>
+            <Body>{t('demoApp.sim.denied.text')}</Body>
             <Bottom><Primary onClick={() => go('pre')}>{t('demoApp.sim.denied.cta')}</Primary></Bottom>
           </Page>
         )
-      case 'cam':
+      case 'cam': {
+        const ring = phase === 3 ? '#7FDCAE' : phase > 0 ? 'var(--brand-300)' : '#fff'
         return (
-          <div style={{ position: 'absolute', inset: 0, background: '#000', color: '#fff', paddingTop: 60 }}>
-            <h3 style={{ margin: '12px 0 0', textAlign: 'center', fontSize: 17, fontWeight: 600 }}>{t('demoApp.sim.cam.title')}</h3>
-            <div style={{ margin: '24px auto 0', width: 220, height: 282, borderRadius: '50%', background: '#1C1C1E', border: `4px solid ${phase === 3 ? GREEN : '#fff'}`, position: 'relative', overflow: 'hidden' }} aria-hidden="true">
-              <svg viewBox="0 0 100 130" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}><circle cx="50" cy="52" r="22" fill="#2C2C2E" /><path d="M12 130c0-26 17-40 38-40s38 14 38 40Z" fill="#2C2C2E" /></svg>
+          <div style={{ position: 'absolute', inset: 0, background: 'var(--n-900)', fontFamily: 'var(--font-text)' }}>
+            <h3 style={{ margin: 0, padding: '64px 20px 12px', fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: '#fff' }}>{t('demoApp.sim.cam.title')}</h3>
+            <div style={{ position: 'relative', height: 376, background: 'linear-gradient(180deg,#1B2146 0%,#10142B 100%)' }} aria-hidden="true">
+              <svg viewBox="0 0 393 376" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+                <defs><mask id="sim-oval"><rect width="393" height="376" fill="#fff" /><ellipse cx="196" cy="186" rx="116" ry="150" fill="#000" /></mask></defs>
+                <ellipse cx="196" cy="186" rx="116" ry="150" fill="#232A52" />
+                <circle cx="196" cy="150" r="46" fill="#2E3668" /><path d="M96 330c0-52 44-86 100-86s100 34 100 86z" fill="#2E3668" />
+                <rect width="393" height="376" fill="rgba(16,20,43,.62)" mask="url(#sim-oval)" />
+                <ellipse cx="196" cy="186" rx="116" ry="150" fill="none" stroke={ring} strokeWidth="4" />
+              </svg>
+              <span style={{ position: 'absolute', left: '50%', bottom: 10, transform: 'translateX(-50%)', fontSize: 12, color: 'rgba(255,255,255,.75)', background: 'rgba(255,255,255,.12)', borderRadius: 999, padding: '4px 12px', whiteSpace: 'nowrap' }}>{t('demoApp.sim.cam.hint')}</span>
             </div>
-            <p style={{ margin: '24px 0 0', textAlign: 'center', fontSize: 20, fontWeight: 600 }} aria-live="polite">{t(`demoApp.sim.cam.steps.${['find', 'blink', 'turn', 'done'][phase]}`)}</p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 16 }} aria-hidden="true">{[0, 1, 2].map((i) => <span key={i} style={{ width: 8, height: 8, borderRadius: 4, background: phase > i ? GREEN : 'rgba(255,255,255,.3)' }} />)}</div>
-            <p style={{ position: 'absolute', bottom: 24, left: 0, right: 0, margin: 0, textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,.6)' }}>{t('demoApp.sim.cam.hint')}</p>
+            <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, background: '#fff', borderRadius: '24px 24px 0 0', padding: '20px 20px 0', minHeight: 232 }}>
+              <p style={{ margin: 0, minHeight: 28, display: 'flex', alignItems: 'center', gap: 8, fontSize: 18, fontWeight: 500, lineHeight: '26px', color: 'var(--ink)' }} aria-live="polite">
+                <span style={{ color: phase === 3 ? 'var(--risk-low)' : 'var(--brand-700)', display: 'inline-flex' }}><Icon name={phase === 3 ? 'approved' : 'info'} size={24} /></span>
+                {t(`demoApp.sim.cam.steps.${['find', 'blink', 'turn', 'done'][phase]}`)}
+              </p>
+              <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
+                {chip(0, t('demoApp.sim.cam.chips.find'))}{chip(1, t('demoApp.sim.cam.chips.blink'))}{chip(2, t('demoApp.sim.cam.chips.turn'))}
+              </div>
+              <p style={{ margin: '16px 0 0', fontSize: 13, lineHeight: '18px', color: 'var(--ink-muted)' }}>{t('demoApp.sim.cam.auto')}</p>
+            </div>
           </div>
         )
+      }
       case 'doc':
         return (
           <Page>
-            <h3 style={{ margin: '12px 0 4px', fontSize: 34, fontWeight: 700, lineHeight: '41px' }}>{t('demoApp.sim.doc.title')}</h3>
-            <p style={{ margin: 0, fontSize: 17, color: SECOND }}>{t('demoApp.sim.doc.intro')}</p>
-            <div style={{ margin: '20px 0 0', height: 150, borderRadius: 12, background: '#E5E5EA', display: 'grid', placeItems: 'center', color: SECOND }}><Icon name="contract" size={30} /></div>
-            <ul style={{ listStyle: 'none', margin: '20px 0 0', padding: 0, background: '#fff', borderRadius: 12 }}>
+            <Title>{t('demoApp.sim.doc.title')}</Title>
+            <Body>{t('demoApp.sim.doc.intro')}</Body>
+            <div style={{ margin: '20px 0 0', height: 140, borderRadius: 12, background: 'var(--n-100)', border: '1px dashed var(--n-300)', display: 'grid', placeItems: 'center', color: 'var(--n-500)' }}><Icon name="contract" size={30} /></div>
+            <ul style={{ listStyle: 'none', margin: '20px 0 0', padding: 0, border: '1px solid var(--border)', borderRadius: 12, background: '#fff' }}>
               {(['name', 'id', 'birth'] as const).map((k, i) => (
-                <li key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderTop: i ? `0.5px solid ${SEP}` : 'none', fontSize: 17 }}>{t(`demoApp.sim.doc.fields.${k}`)}<Tick done={phase > i} active={phase === i} /></li>
+                <li key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', borderTop: i ? '1px solid var(--divider)' : 'none', fontSize: 15, color: 'var(--ink)' }}>{t(`demoApp.sim.doc.fields.${k}`)}<Tick done={phase > i} active={phase === i} /></li>
               ))}
             </ul>
-            <p style={{ margin: '16px 0 0', fontSize: 13, color: SECOND }}>{t('demoApp.sim.doc.hint')}</p>
+            <Small>{t('demoApp.sim.doc.hint')}</Small>
           </Page>
         )
       case 'result':
         return (
           <Page>
-            <div style={{ marginTop: 50, width: 88, height: 88, borderRadius: 44, background: GREEN, display: 'grid', placeItems: 'center', color: '#fff' }}><Icon name="check" size={30} /></div>
-            <h3 style={{ margin: '24px 0 8px', fontSize: 28, fontWeight: 700, lineHeight: '34px' }}>{t('demoApp.sim.result.title')}</h3>
-            <p style={{ margin: 0, fontSize: 17, color: SECOND }}>{t('demoApp.sim.result.score')}: <strong style={{ color: '#000' }}>91/100</strong> · {t('demoApp.sim.result.decision')}</p>
-            <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: '20px', color: SECOND }}>{t('demoApp.sim.result.text')}</p>
+            <Badge icon="approved" tone="low" />
+            <Title>{t('demoApp.sim.result.title')}</Title>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, height: 28, padding: '0 12px', borderRadius: 999, background: 'var(--risk-low-bg)', color: 'var(--risk-low-ink)', fontSize: 13, fontWeight: 600 }}><Icon name="approved" size={16} />{t('demoApp.sim.result.decision')} · 91/100</div>
+            <p style={{ margin: '16px 0 0', fontSize: 15, lineHeight: '22px', color: 'var(--ink-body)' }}>{t('demoApp.sim.result.text')}</p>
             <Bottom><Primary onClick={restart}>{t('demoApp.sim.result.cta')}</Primary></Bottom>
           </Page>
         )
@@ -213,9 +245,9 @@ export function OnboardingSimulator({ name }: { name: string }) {
   )
 }
 
-/** Tela de app no estilo iOS: fundo agrupado, margens de 20 pt, abaixo da barra de status. */
+/** Página web do cliente (design system da Vero ID): fundo branco, margens de 20 pt, abaixo da barra de status. */
 function Page({ children }: { children: ReactNode }) {
-  return <div style={{ position: 'absolute', inset: 0, background: '#F2F2F7', padding: '64px 20px 0' }}>{children}</div>
+  return <div style={{ position: 'absolute', inset: 0, background: '#fff', padding: '64px 20px 0', fontFamily: 'var(--font-text)' }}>{children}</div>
 }
 function Bottom({ children }: { children: ReactNode }) {
   return <div style={{ position: 'absolute', left: 20, right: 20, bottom: 24 }}>{children}</div>
