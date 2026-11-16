@@ -1395,63 +1395,73 @@
       }
     },
     "sim": {
-      "splashHint": "Toque para abrir o app",
-      "open": "Abrir app",
-      "next": "Próximo",
-      "startBtn": "Começar",
-      "slides": {
-        "0": {
-          "title": "Confirme sua identidade com a {{org}}",
-          "text": "Um passo a passo rápido, feito para o celular."
-        },
-        "1": {
-          "title": "Leva cerca de 2 minutos",
-          "text": "Você faz uma prova de vida e confere o documento."
-        },
-        "2": {
-          "title": "Nada é salvo nesta demo",
-          "text": "Esta é uma encenação: nenhum dado seu é coletado."
-        }
+      "home": {
+        "openApp": "Abrir o app {{org}}"
       },
-      "permTitle": "“{{org}}” quer acessar a câmera",
-      "permText": "Pedido simulado. O seu navegador não é consultado e nenhuma câmera abre.",
-      "allow": "Permitir (simulado)",
-      "deny": "Não permitir",
-      "face": {
-        "title": "Prova de vida (simulada)",
-        "hint": "Animação ilustrativa: sem câmera e sem rosto de ninguém.",
+      "welcome": {
+        "title": "Confirme sua identidade",
+        "body": "{{org}} precisa confirmar que é você. Leva cerca de 2 minutos.",
+        "b1": "Prova de vida pela câmera",
+        "b2": "Foto do documento",
+        "b3": "Seus dados seguem a LGPD",
+        "cta": "Continuar"
+      },
+      "pre": {
+        "title": "Antes de continuar",
+        "body": "Na próxima tela, o iPhone vai pedir acesso à câmera. Toque em “OK” para permitir.",
+        "demo": "Simulação: nenhum pedido real é feito ao seu navegador.",
+        "cta": "Continuar"
+      },
+      "alert": {
+        "title": "“{{org}}” quer acessar a câmera",
+        "message": "Usamos a câmera para confirmar que você é você.",
+        "deny": "Não permitir",
+        "ok": "OK"
+      },
+      "cam": {
+        "title": "Prova de vida",
+        "cancel": "Cancelar",
         "steps": {
-          "find": "Procurando um rosto",
+          "find": "Posicione o rosto no centro",
           "blink": "Pisque os olhos",
-          "turn": "Vire a cabeça",
-          "done": "Prova de vida concluída"
-        }
+          "turn": "Vire a cabeça devagar",
+          "done": "Tudo certo"
+        },
+        "hint": "Ilustração: nenhuma câmera está ativa."
       },
       "doc": {
-        "title": "Documento (simulado)",
-        "hint": "Documento ilustrativo: nada é lido de verdade.",
+        "title": "Documento",
+        "intro": "Conferindo os dados",
         "fields": {
           "name": "Nome",
-          "id": "Número do documento",
-          "birth": "Data de nascimento"
-        }
+          "id": "Documento",
+          "birth": "Nascimento"
+        },
+        "hint": "Ilustração: nada é lido de verdade."
       },
       "result": {
         "title": "Verificação concluída",
-        "score": "Score de risco (fictício)",
+        "score": "Score de risco",
         "decision": "Aprovada",
-        "text": "No sistema oficial, este resultado cairia no painel da empresa."
+        "text": "Na versão oficial, este resultado cairia no painel da empresa.",
+        "cta": "Concluir"
       },
-      "restart": "Ver de novo",
+      "denied": {
+        "title": "Câmera não permitida",
+        "text": "Em um iPhone real, você poderia ativar em Ajustes › Privacidade › Câmera.",
+        "cta": "Tentar de novo"
+      },
+      "restart": "Recomeçar",
       "progress": "Tela {{n}} de {{total}}",
+      "drawn": "tudo desenhado na página",
       "log": {
         "title": "O que o sistema registraria (fictício)",
-        "empty": "Abra o app ao lado para ver os eventos aparecerem.",
+        "empty": "Toque no app da empresa na tela do iPhone para ver os eventos aparecerem.",
         "note": "Eventos inventados para ilustrar. Nenhum deles é gravado ou enviado.",
         "events": {
           "app_open": "App aberto",
           "consent_shown": "Termo de consentimento exibido",
-          "camera_asked": "Permissão de câmera solicitada",
+          "permission_prompt": "Pedido de permissão da câmera exibido",
           "camera_allowed": "Permissão concedida (simulada)",
           "camera_denied": "Permissão negada (simulada)",
           "liveness_started": "Prova de vida iniciada",
@@ -1461,7 +1471,7 @@
         }
       },
       "offTitle": "A câmera nunca é aberta",
-      "offBody": "Por motivos de segurança e de LGPD, desativei a câmera. No sistema oficial a ideia era fazer a biometria facial e conferir o documento; aqui você vê uma animação do passo a passo, sem rosto de ninguém. Este projeto é uma reconstrução do sistema oficial e não recolhe nada."
+      "offBody": "O iPhone e o pop-up de permissão são só um desenho feito na página: seu navegador nunca é consultado e nenhuma câmera abre. No sistema oficial a ideia era fazer a biometria facial e conferir o documento; por segurança e por causa da LGPD, aqui você vê só a encenação. Este projeto é uma reconstrução do sistema oficial e não recolhe nada."
     },
     "settings": {
       "name": "Nome da empresa (fictício)",

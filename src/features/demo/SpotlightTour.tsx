@@ -95,13 +95,13 @@ export function SpotlightTour({ steps, index, onIndex, onFinish }: {
       <div className="absolute inset-0" aria-hidden="true" />
       <div aria-hidden="true" className="vtour-spot pointer-events-none fixed rounded-[18px]"
         style={{ top: spot.top, left: spot.left, width: spot.width, height: spot.height, boxShadow: '0 0 0 200vmax rgba(16,20,43,.62)' }}>
-        {rect ? <span className="vtour-ring absolute inset-0 rounded-[18px] border-2 border-white/90" /> : null}
+        {rect ? <span className="absolute inset-0 rounded-[18px] border-2 border-white/80" /> : null}
       </div>
 
       <div ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="tour-h" aria-describedby="tour-b"
         className="vtour-card fixed flex flex-col gap-4 rounded-[20px] bg-[var(--surface-raised)] p-5 shadow-[var(--shadow-modal)]"
         style={mobile ? { left: 12, right: 12, bottom: 12, maxHeight: '78dvh', overflowY: 'auto' } : { width: CARD_W, top: card?.top ?? 0, left: card?.left ?? 0, opacity: card ? 1 : 0 }}>
-        <div key={index} className="vtour-in flex flex-col gap-3">
+        <div key={index} className="flex flex-col gap-3">
           <div className="flex items-start gap-3">
             <LottieIcon name={step.lottie} size={64} className="shrink-0" />
             <div className="min-w-0 pt-1">

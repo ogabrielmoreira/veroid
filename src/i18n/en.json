@@ -1395,63 +1395,73 @@
       }
     },
     "sim": {
-      "splashHint": "Tap to open the app",
-      "open": "Open app",
-      "next": "Next",
-      "startBtn": "Start",
-      "slides": {
-        "0": {
-          "title": "Confirm your identity with {{org}}",
-          "text": "A quick step-by-step, made for your phone."
-        },
-        "1": {
-          "title": "Takes about 2 minutes",
-          "text": "You do a liveness check and verify your document."
-        },
-        "2": {
-          "title": "Nothing is saved in this demo",
-          "text": "This is a staging: none of your data is collected."
-        }
+      "home": {
+        "openApp": "Open the {{org}} app"
       },
-      "permTitle": "“{{org}}” would like to access the camera",
-      "permText": "Simulated request. Your browser is not asked and no camera opens.",
-      "allow": "Allow (simulated)",
-      "deny": "Don't allow",
-      "face": {
-        "title": "Liveness check (simulated)",
-        "hint": "Illustrative animation: no camera and nobody's face.",
+      "welcome": {
+        "title": "Confirm your identity",
+        "body": "{{org}} needs to confirm it's you. Takes about 2 minutes.",
+        "b1": "Liveness check with the camera",
+        "b2": "Photo of your document",
+        "b3": "Your data follows LGPD",
+        "cta": "Continue"
+      },
+      "pre": {
+        "title": "Before you continue",
+        "body": "On the next screen, iPhone will ask for camera access. Tap “OK” to allow.",
+        "demo": "Simulation: no real request is made to your browser.",
+        "cta": "Continue"
+      },
+      "alert": {
+        "title": "“{{org}}” Would Like to Access the Camera",
+        "message": "We use the camera to confirm it's really you.",
+        "deny": "Don't Allow",
+        "ok": "OK"
+      },
+      "cam": {
+        "title": "Liveness check",
+        "cancel": "Cancel",
         "steps": {
-          "find": "Looking for a face",
+          "find": "Position your face in the center",
           "blink": "Blink your eyes",
-          "turn": "Turn your head",
-          "done": "Liveness check complete"
-        }
+          "turn": "Slowly turn your head",
+          "done": "All set"
+        },
+        "hint": "Illustration: no camera is active."
       },
       "doc": {
-        "title": "Document (simulated)",
-        "hint": "Illustrative document: nothing is actually read.",
+        "title": "Document",
+        "intro": "Checking your details",
         "fields": {
           "name": "Name",
-          "id": "Document number",
+          "id": "Document",
           "birth": "Date of birth"
-        }
+        },
+        "hint": "Illustration: nothing is actually read."
       },
       "result": {
         "title": "Verification complete",
-        "score": "Risk score (fictional)",
+        "score": "Risk score",
         "decision": "Approved",
-        "text": "In the official system, this result would land on the company's dashboard."
+        "text": "In the official version, this result would land on the company's dashboard.",
+        "cta": "Done"
       },
-      "restart": "Watch again",
+      "denied": {
+        "title": "Camera not allowed",
+        "text": "On a real iPhone, you could enable it in Settings › Privacy › Camera.",
+        "cta": "Try again"
+      },
+      "restart": "Restart",
       "progress": "Screen {{n}} of {{total}}",
+      "drawn": "everything is drawn on the page",
       "log": {
         "title": "What the system would record (fictional)",
-        "empty": "Open the app on the left to see events appear.",
+        "empty": "Tap the company's app on the iPhone screen to see events appear.",
         "note": "Made-up events for illustration. None of them is stored or sent.",
         "events": {
           "app_open": "App opened",
           "consent_shown": "Consent notice shown",
-          "camera_asked": "Camera permission requested",
+          "permission_prompt": "Camera permission prompt shown",
           "camera_allowed": "Permission granted (simulated)",
           "camera_denied": "Permission denied (simulated)",
           "liveness_started": "Liveness check started",
@@ -1461,7 +1471,7 @@
         }
       },
       "offTitle": "The camera is never opened",
-      "offBody": "For security and LGPD reasons, I turned the camera off. In the official system the idea was to do facial biometrics and check the document; here you see an animation of the steps, with nobody's face. This project is a rebuild of the official system and collects nothing."
+      "offBody": "The iPhone and its permission pop-up are just a drawing on the page: your browser is never asked and no camera opens. In the official system the idea was to do facial biometrics and check the document; for security and LGPD reasons, here you only see the staging. This project is a rebuild of the official system and collects nothing."
     },
     "settings": {
       "name": "Company name (fictional)",
