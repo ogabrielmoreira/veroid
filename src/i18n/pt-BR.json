@@ -1334,7 +1334,7 @@
       "links": "No sistema oficial, a empresa gera um link único e o envia ao cliente. Aqui você pode gerar um link de mentira; o envio por WhatsApp, SMS, e-mail e QR Code está desativado. O token do link fica oculto.",
       "leads": "Estes leads são fictícios. No sistema oficial, quem passa na verificação e atinge o score mínimo vira cliente qualificado, de forma automática ou manual.",
       "review": "Sessões que pedem decisão humana. Nenhum rosto é exibido: só um espaço reservado. Você pode aprovar ou reprovar para ver como funciona; nada é salvo.",
-      "simulator": "Veja o passo a passo que o cliente faria no celular. É só uma encenação: nenhum pedido de câmera é feito ao seu navegador.",
+      "simulator": "Veja o que o cliente vê ao abrir o link que você enviou, no navegador do celular. É só uma encenação: nenhum pedido de câmera é feito ao seu navegador.",
       "settings": "Personalize o nome da empresa e a cor principal. Fica salvo só no seu navegador."
     },
     "links": {
@@ -1395,9 +1395,6 @@
       }
     },
     "sim": {
-      "home": {
-        "openApp": "Abrir o app {{org}}"
-      },
       "welcome": {
         "title": "Confirme sua identidade",
         "body": "{{org}} precisa confirmar que é você. Leva cerca de 2 minutos.",
@@ -1408,15 +1405,15 @@
       },
       "pre": {
         "title": "Antes de continuar",
-        "body": "Na próxima tela, o iPhone vai pedir acesso à câmera. Toque em “OK” para permitir.",
+        "body": "Na próxima tela, o navegador vai pedir acesso à câmera. Toque em “Permitir” para continuar.",
         "demo": "Simulação: nenhum pedido real é feito ao seu navegador.",
         "cta": "Continuar"
       },
       "alert": {
-        "title": "“{{org}}” quer acessar a câmera",
-        "message": "Usamos a câmera para confirmar que você é você.",
+        "title": "“{{host}}” quer acessar a câmera",
+        "message": "Usamos a câmera para confirmar que é você mesmo.",
         "deny": "Não permitir",
-        "ok": "OK"
+        "ok": "Permitir"
       },
       "cam": {
         "title": "Prova de vida",
@@ -1448,7 +1445,7 @@
       },
       "denied": {
         "title": "Câmera não permitida",
-        "text": "Em um iPhone real, você poderia ativar em Ajustes › Privacidade › Câmera.",
+        "text": "No Safari, você pode permitir depois: toque em aA › Ajustes do site › Câmera.",
         "cta": "Tentar de novo"
       },
       "restart": "Recomeçar",
@@ -1456,10 +1453,9 @@
       "drawn": "tudo desenhado na página",
       "log": {
         "title": "O que o sistema registraria (fictício)",
-        "empty": "Toque no app da empresa na tela do iPhone para ver os eventos aparecerem.",
+        "empty": "Os eventos aparecem aqui conforme o cliente avança pela página.",
         "note": "Eventos inventados para ilustrar. Nenhum deles é gravado ou enviado.",
         "events": {
-          "app_open": "App aberto",
           "consent_shown": "Termo de consentimento exibido",
           "permission_prompt": "Pedido de permissão da câmera exibido",
           "camera_allowed": "Permissão concedida (simulada)",
@@ -1467,11 +1463,14 @@
           "liveness_started": "Prova de vida iniciada",
           "liveness_passed": "Prova de vida aprovada",
           "document_read": "Documento lido",
-          "decision": "Decisão: aprovada"
+          "decision": "Decisão: aprovada",
+          "link_opened": "Link aberto no navegador do celular"
         }
       },
       "offTitle": "A câmera nunca é aberta",
-      "offBody": "O iPhone e o pop-up de permissão são só um desenho feito na página: seu navegador nunca é consultado e nenhuma câmera abre. No sistema oficial a ideia era fazer a biometria facial e conferir o documento; por segurança e por causa da LGPD, aqui você vê só a encenação. Este projeto é uma reconstrução do sistema oficial e não recolhe nada."
+      "offBody": "O celular, o navegador e o pop-up de permissão são só um desenho na página: seu navegador nunca é consultado e nenhuma câmera abre. No sistema oficial a ideia era fazer a biometria facial e conferir o documento; por segurança e por causa da LGPD, aqui você vê só a encenação. Este projeto é uma reconstrução do sistema oficial e não recolhe nada.",
+      "fakeLink": "Link falso: {{host}} não existe. Ele é montado com o nome da empresa que você digitou.",
+      "fakeAddress": "Barra de endereço: {{host}}"
     },
     "settings": {
       "name": "Nome da empresa (fictício)",
@@ -1512,7 +1511,7 @@
         },
         "simulator": {
           "title": "Simulador de onboarding",
-          "body": "Mostra o passo a passo do cliente, inclusive a tela que pediria permissão da câmera. É só encenação: o seu navegador nunca é solicitado e nenhuma câmera abre."
+          "body": "Mostra a página em que o cliente cai ao abrir o link, inclusive a tela que pediria permissão da câmera. É só encenação: o seu navegador nunca é solicitado e nenhuma câmera abre."
         },
         "settings": {
           "title": "Configurações",

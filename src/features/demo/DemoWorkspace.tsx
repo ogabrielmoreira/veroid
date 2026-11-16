@@ -8,7 +8,7 @@ import { Icon, type IconName } from '@/components/ui/Icon'
 import { brandCssVars } from '@/lib/brand'
 import { checkContrast, formatRatio, normalizeHex } from '@/lib/color'
 import { DemoCharts } from './DemoCharts'
-import { OnboardingSimulator } from './OnboardingSimulator'
+import { fakeHost, OnboardingSimulator } from './OnboardingSimulator'
 import { SpotlightTour, type TourStep } from './SpotlightTour'
 
 /**
@@ -121,7 +121,7 @@ export function DemoWorkspace() {
           </header>
 
           {tab === 'overview' ? <DemoCharts /> : null}
-          {tab === 'links' ? <LinksTab /> : null}
+          {tab === 'links' ? <LinksTab name={name} /> : null}
           {tab === 'leads' ? <LeadsTab /> : null}
           {tab === 'review' ? <ReviewTab /> : null}
           {tab === 'simulator' ? <SimulatorTab name={name} /> : null}
@@ -149,7 +149,7 @@ function OffBadge() {
 interface FakeLink { id: string; label: string; expires: string }
 const maskToken = () => 'demo-••••••••'
 
-function LinksTab() {
+function LinksTab({ name }: { name: string }) {
   const { t } = useTranslation()
   const [label, setLabel] = useState('')
   const [validity, setValidity] = useState('48')
@@ -192,7 +192,7 @@ function LinksTab() {
             <article key={l.id} className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-raised)] p-4">
               <div className="min-w-0 flex-1">
                 <p className="m-0 flex flex-wrap items-center gap-2 font-semibold text-[var(--ink)]">{l.label} <Chip tone="neutral" icon="info">{t('demoApp.links.simulated')}</Chip></p>
-                <p className="m-0 mt-1 font-mono text-[12px] text-[var(--ink-muted)]" aria-label={t('demoApp.links.tokenHidden')}>…/v/{maskToken()}</p>
+                <p className="m-0 mt-1 font-mono text-[12px] text-[var(--ink-muted)]" aria-label={t('demoApp.links.tokenHidden')}>https://{fakeHost(name)}/v/{maskToken()}</p>
                 <p className="m-0 mt-1 t-caption text-[var(--ink-muted)]">{t('demoApp.links.expires', { when: l.expires })} · {t('demoApp.links.tokenHidden')}</p>
               </div>
               <div className="flex flex-wrap gap-2"><Off icon="copy">{t('demoApp.links.copy')}</Off><Off icon="chat">WhatsApp</Off><Off icon="qr">QR Code</Off></div>

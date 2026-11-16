@@ -5,13 +5,21 @@ import { Button } from '@/components/ui/Button'
 import { Icon, type IconName } from '@/components/ui/Icon'
 
 /**
- * Simulador de onboarding num "iPhone": medidas em pontos reais (tela 393×852, Dynamic Island, barra de
- * status, indicador de início) e pop-up de permissão no estilo do sistema. É só um desenho na página:
- * nenhuma câmera, permissão do navegador ou rede é usada. Segue as diretrizes iOS (HIG): alerta só para a
- * decisão crítica, alvos de 44 pt, fonte do sistema, cores semânticas.
+ * Simulador de onboarding: o cliente abre o link recebido no Safari do iPhone (não é um aplicativo).
+ * Medidas em pontos reais (tela 393×852, Dynamic Island, barra de status, barra de endereço do Safari) e
+ * pop-up de permissão no estilo do sistema. É só um desenho na página: o endereço é falso e nenhuma câmera,
+ * permissão do navegador ou rede é usada. Segue as diretrizes iOS (HIG): alerta só para a decisão crítica,
+ * alvos de 44 pt, fonte do sistema, cores semânticas.
  */
-type Screen = 'home' | 'welcome' | 'pre' | 'alert' | 'cam' | 'doc' | 'result' | 'denied'
-const FLOW: Screen[] = ['home', 'welcome', 'pre', 'alert', 'cam', 'doc', 'result']
+type Screen = 'welcome' | 'pre' | 'alert' | 'cam' | 'doc' | 'result' | 'denied'
+const FLOW: Screen[] = ['welcome', 'pre', 'alert', 'cam', 'doc', 'result']
+const BAR = 112 // altura da barra inferior do Safari (endereço + ferramentas)
+
+/** Endereço falso, derivado do nome da empresa. O domínio não existe de verdade. */
+export function fakeHost(name: string) {
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 26).replace(/-+$/g, '')
+  return `${slug || 'your-company'}.onboard-test.com`
+}
 const SCALE = 0.8
 const W = 393, H = 852, BEZEL = 12
 const SF = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif'
@@ -19,7 +27,7 @@ const BLUE = '#007AFF', GREEN = '#34C759', SEP = 'rgba(60,60,67,.29)', SECOND = 
 
 export function OnboardingSimulator({ name }: { name: string }) {
   const { t } = useTranslation()
-  const [screen, setScreen] = useState<Screen>('home')
+  const [screen, setScreen] = useState<Screen>('welcome')
   const [phase, setPhase] = useState(0)
   const [log, setLog] = useState<Array<{ at: number; key: string }>>([])
   const t0 = useRef(0)
@@ -29,7 +37,9 @@ export function OnboardingSimulator({ name }: { name: string }) {
     setLog((l) => [...l, { at: Math.round((Date.now() - t0.current) / 1000), key }])
   }, [])
   const go = (s: Screen) => { setScreen(s); setPhase(0) }
-  const restart = () => { setScreen('home'); setPhase(0); setLog([]); t0.current = 0 }
+  const restart = () => { setScreen('welcome'); setPhase(0); t0.current = 0; setLog([{ at: 0, key: 'link_opened' }]) }
+  const host = fakeHost(name)
+  useEffect(() => { t0.current = Date.now(); setLog([{ at: 0, key: 'link_opened' }]) }, [])
 
   // Linha do tempo simples da câmera e do documento (sem animação de varredura).
   useEffect(() => {
@@ -59,31 +69,14 @@ export function OnboardingSimulator({ name }: { name: string }) {
 
   const content = () => {
     switch (screen) {
-      case 'home':
-        return (
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(165deg,#5B7DB8 0%,#9A8CC7 55%,#E7A9A0 100%)', paddingTop: 110 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '26px 0', padding: '0 20px', justifyItems: 'center' }}>
-              {([['#34C759', 'users'], ['#0A84FF', 'mail'], ['#FFD60A', 'evidence'], ['#8E8E93', 'settings'], ['#FF9F0A', 'chat'], ['#5E5CE6', 'chart'], ['#FF375F', 'health']] as Array<[string, IconName]>).map(([c, ic], i) => (
-                <div key={i} style={{ textAlign: 'center', width: 74 }}>
-                  <div style={{ width: 60, height: 60, borderRadius: 14, background: c, display: 'grid', placeItems: 'center', color: '#fff', margin: '0 auto' }}><Icon name={ic} size={24} /></div>
-                  <div style={{ marginTop: 5, color: '#fff', fontSize: 11 }}>{['Phone', 'Mail', 'Notes', 'Settings', 'Chat', 'Stats', 'Health'][i]}</div>
-                </div>
-              ))}
-              <button type="button" onClick={() => { push('app_open'); go('welcome') }} aria-label={t('demoApp.sim.home.openApp', { org: name })} style={{ textAlign: 'center', width: 74 }}>
-                <div style={{ width: 60, height: 60, borderRadius: 14, background: 'var(--brand-600)', display: 'grid', placeItems: 'center', color: '#fff', fontSize: 22, fontWeight: 700, margin: '0 auto', boxShadow: '0 0 0 3px rgba(255,255,255,.55)' }}>{initials}</div>
-                <div style={{ marginTop: 5, color: '#fff', fontSize: 11, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</div>
-              </button>
-            </div>
-            <div style={{ position: 'absolute', left: 14, right: 14, bottom: 30, height: 96, borderRadius: 34, background: 'rgba(255,255,255,.25)', backdropFilter: 'blur(20px)', display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '0 12px' }}>
-              {['#34C759', '#0A84FF', '#FF9F0A', '#8E8E93'].map((c) => <div key={c} style={{ width: 60, height: 60, borderRadius: 14, background: c }} />)}
-            </div>
-          </div>
-        )
       case 'welcome':
         return (
           <Page>
-            <div style={{ width: 64, height: 64, borderRadius: 16, background: 'var(--brand-600)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 24, fontWeight: 700 }}>{initials}</div>
-            <h3 style={{ margin: '20px 0 8px', fontSize: 34, fontWeight: 700, lineHeight: '41px', letterSpacing: '.01em' }}>{t('demoApp.sim.welcome.title')}</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--brand-600)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 16, fontWeight: 700 }}>{initials}</div>
+              <span style={{ fontSize: 17, fontWeight: 600 }}>{name}</span>
+            </div>
+            <h3 style={{ margin: '28px 0 8px', fontSize: 34, fontWeight: 700, lineHeight: '41px', letterSpacing: '.01em' }}>{t('demoApp.sim.welcome.title')}</h3>
             <p style={{ margin: 0, fontSize: 17, lineHeight: '22px', color: SECOND }}>{t('demoApp.sim.welcome.body', { org: name })}</p>
             <ul style={{ listStyle: 'none', margin: '24px 0 0', padding: 0, background: '#fff', borderRadius: 12 }}>
               {(['b1', 'b2', 'b3'] as const).map((k, i) => (
@@ -96,34 +89,18 @@ export function OnboardingSimulator({ name }: { name: string }) {
       case 'pre':
       case 'alert':
         return (
-          <>
-            <Page>
-              <div style={{ marginTop: 60, display: 'grid', placeItems: 'center', width: 88, height: 88, borderRadius: 44, background: 'rgba(0,122,255,.12)', color: BLUE }}><Icon name="capture" size={30} /></div>
-              <h3 style={{ margin: '24px 0 8px', fontSize: 28, fontWeight: 700, lineHeight: '34px' }}>{t('demoApp.sim.pre.title')}</h3>
-              <p style={{ margin: 0, fontSize: 17, lineHeight: '22px', color: SECOND }}>{t('demoApp.sim.pre.body')}</p>
-              <p style={{ margin: '16px 0 0', fontSize: 13, lineHeight: '18px', color: SECOND }}>{t('demoApp.sim.pre.demo')}</p>
-              <Bottom><Primary onClick={() => { push('permission_prompt'); setScreen('alert') }}>{t('demoApp.sim.pre.cta')}</Primary></Bottom>
-            </Page>
-            {screen === 'alert' ? (
-              <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,.4)', display: 'grid', placeItems: 'center' }} role="alertdialog" aria-modal="true" aria-labelledby="ios-alert-t">
-                <div style={{ width: 270, borderRadius: 14, background: 'rgba(242,242,247,.94)', backdropFilter: 'blur(30px)', overflow: 'hidden', textAlign: 'center' }}>
-                  <div style={{ padding: '20px 16px 16px' }}>
-                    <p id="ios-alert-t" style={{ margin: 0, fontSize: 17, fontWeight: 600, lineHeight: '22px' }}>{t('demoApp.sim.alert.title', { org: name })}</p>
-                    <p style={{ margin: '4px 0 0', fontSize: 13, lineHeight: '18px' }}>{t('demoApp.sim.alert.message')}</p>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderTop: `0.5px solid ${SEP}` }}>
-                    <button type="button" onClick={() => { push('camera_denied'); go('denied') }} style={{ height: 44, fontSize: 17, color: BLUE, borderRight: `0.5px solid ${SEP}` }}>{t('demoApp.sim.alert.deny')}</button>
-                    <button type="button" onClick={() => { push('camera_allowed'); go('cam') }} style={{ height: 44, fontSize: 17, fontWeight: 600, color: BLUE }}>{t('demoApp.sim.alert.ok')}</button>
-                  </div>
-                </div>
-              </div>
-            ) : null}
-          </>
+          <Page>
+            <div style={{ marginTop: 40, display: 'grid', placeItems: 'center', width: 88, height: 88, borderRadius: 44, background: 'rgba(0,122,255,.12)', color: BLUE }}><Icon name="capture" size={30} /></div>
+            <h3 style={{ margin: '24px 0 8px', fontSize: 28, fontWeight: 700, lineHeight: '34px' }}>{t('demoApp.sim.pre.title')}</h3>
+            <p style={{ margin: 0, fontSize: 17, lineHeight: '22px', color: SECOND }}>{t('demoApp.sim.pre.body')}</p>
+            <p style={{ margin: '16px 0 0', fontSize: 13, lineHeight: '18px', color: SECOND }}>{t('demoApp.sim.pre.demo')}</p>
+            <Bottom><Primary onClick={() => { push('permission_prompt'); setScreen('alert') }}>{t('demoApp.sim.pre.cta')}</Primary></Bottom>
+          </Page>
         )
       case 'denied':
         return (
           <Page>
-            <div style={{ marginTop: 60, display: 'grid', placeItems: 'center', width: 88, height: 88, borderRadius: 44, background: 'rgba(60,60,67,.1)', color: SECOND }}><Icon name="cameraOff" size={30} /></div>
+            <div style={{ marginTop: 40, display: 'grid', placeItems: 'center', width: 88, height: 88, borderRadius: 44, background: 'rgba(60,60,67,.1)', color: SECOND }}><Icon name="cameraOff" size={30} /></div>
             <h3 style={{ margin: '24px 0 8px', fontSize: 28, fontWeight: 700, lineHeight: '34px' }}>{t('demoApp.sim.denied.title')}</h3>
             <p style={{ margin: 0, fontSize: 17, lineHeight: '22px', color: SECOND }}>{t('demoApp.sim.denied.text')}</p>
             <Bottom><Primary onClick={() => go('pre')}>{t('demoApp.sim.denied.cta')}</Primary></Bottom>
@@ -132,20 +109,19 @@ export function OnboardingSimulator({ name }: { name: string }) {
       case 'cam':
         return (
           <div style={{ position: 'absolute', inset: 0, background: '#000', color: '#fff', paddingTop: 60 }}>
-            <div style={{ padding: '0 16px', fontSize: 17, color: '#0A84FF' }}>{t('demoApp.sim.cam.cancel')}</div>
             <h3 style={{ margin: '12px 0 0', textAlign: 'center', fontSize: 17, fontWeight: 600 }}>{t('demoApp.sim.cam.title')}</h3>
-            <div style={{ margin: '28px auto 0', width: 230, height: 296, borderRadius: '50%', background: '#1C1C1E', border: `4px solid ${phase === 3 ? GREEN : '#fff'}`, position: 'relative', overflow: 'hidden' }} aria-hidden="true">
+            <div style={{ margin: '24px auto 0', width: 220, height: 282, borderRadius: '50%', background: '#1C1C1E', border: `4px solid ${phase === 3 ? GREEN : '#fff'}`, position: 'relative', overflow: 'hidden' }} aria-hidden="true">
               <svg viewBox="0 0 100 130" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}><circle cx="50" cy="52" r="22" fill="#2C2C2E" /><path d="M12 130c0-26 17-40 38-40s38 14 38 40Z" fill="#2C2C2E" /></svg>
             </div>
-            <p style={{ margin: '28px 0 0', textAlign: 'center', fontSize: 20, fontWeight: 600 }} aria-live="polite">{t(`demoApp.sim.cam.steps.${['find', 'blink', 'turn', 'done'][phase]}`)}</p>
+            <p style={{ margin: '24px 0 0', textAlign: 'center', fontSize: 20, fontWeight: 600 }} aria-live="polite">{t(`demoApp.sim.cam.steps.${['find', 'blink', 'turn', 'done'][phase]}`)}</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 16 }} aria-hidden="true">{[0, 1, 2].map((i) => <span key={i} style={{ width: 8, height: 8, borderRadius: 4, background: phase > i ? GREEN : 'rgba(255,255,255,.3)' }} />)}</div>
-            <p style={{ position: 'absolute', bottom: 56, left: 0, right: 0, margin: 0, textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,.6)' }}>{t('demoApp.sim.cam.hint')}</p>
+            <p style={{ position: 'absolute', bottom: 24, left: 0, right: 0, margin: 0, textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,.6)' }}>{t('demoApp.sim.cam.hint')}</p>
           </div>
         )
       case 'doc':
         return (
           <Page>
-            <h3 style={{ margin: '56px 0 4px', fontSize: 34, fontWeight: 700, lineHeight: '41px' }}>{t('demoApp.sim.doc.title')}</h3>
+            <h3 style={{ margin: '12px 0 4px', fontSize: 34, fontWeight: 700, lineHeight: '41px' }}>{t('demoApp.sim.doc.title')}</h3>
             <p style={{ margin: 0, fontSize: 17, color: SECOND }}>{t('demoApp.sim.doc.intro')}</p>
             <div style={{ margin: '20px 0 0', height: 150, borderRadius: 12, background: '#E5E5EA', display: 'grid', placeItems: 'center', color: SECOND }}><Icon name="contract" size={30} /></div>
             <ul style={{ listStyle: 'none', margin: '20px 0 0', padding: 0, background: '#fff', borderRadius: 12 }}>
@@ -159,7 +135,7 @@ export function OnboardingSimulator({ name }: { name: string }) {
       case 'result':
         return (
           <Page>
-            <div style={{ marginTop: 90, width: 88, height: 88, borderRadius: 44, background: GREEN, display: 'grid', placeItems: 'center', color: '#fff' }}><Icon name="check" size={30} /></div>
+            <div style={{ marginTop: 50, width: 88, height: 88, borderRadius: 44, background: GREEN, display: 'grid', placeItems: 'center', color: '#fff' }}><Icon name="check" size={30} /></div>
             <h3 style={{ margin: '24px 0 8px', fontSize: 28, fontWeight: 700, lineHeight: '34px' }}>{t('demoApp.sim.result.title')}</h3>
             <p style={{ margin: 0, fontSize: 17, color: SECOND }}>{t('demoApp.sim.result.score')}: <strong style={{ color: '#000' }}>91/100</strong> · {t('demoApp.sim.result.decision')}</p>
             <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: '20px', color: SECOND }}>{t('demoApp.sim.result.text')}</p>
@@ -175,18 +151,47 @@ export function OnboardingSimulator({ name }: { name: string }) {
         <div data-tour="phone" style={{ width: (W + BEZEL * 2) * SCALE, height: (H + BEZEL * 2) * SCALE }}>
           <div style={{ width: W + BEZEL * 2, height: H + BEZEL * 2, transform: `scale(${SCALE})`, transformOrigin: 'top left', borderRadius: 68, background: '#1C1C1E', padding: BEZEL, boxShadow: '0 0 0 2px #3A3A3C, 0 24px 48px rgba(16,20,43,.28)', position: 'relative' }}>
             <div style={{ position: 'relative', width: W, height: H, borderRadius: 56, overflow: 'hidden', background: '#fff', fontFamily: SF, color: '#000', WebkitFontSmoothing: 'antialiased' }}>
-              {content()}
+              <div style={{ position: 'absolute', inset: `0 0 ${BAR}px 0`, overflow: 'hidden' }}>{content()}</div>
+              {/* barra inferior do Safari: endereço e ferramentas */}
+              <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: BAR, background: 'rgba(249,249,249,.96)', borderTop: `0.5px solid ${SEP}` }}>
+                <div style={{ margin: '10px 16px 0', height: 44, borderRadius: 14, background: 'rgba(118,118,128,.12)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px', fontSize: 16 }}>
+                  <span style={{ fontSize: 14, color: '#000' }} aria-hidden="true">aA</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 5, minWidth: 0 }} aria-label={t('demoApp.sim.fakeAddress', { host })}>
+                    <svg width="12" height="14" viewBox="0 0 12 14" aria-hidden="true" fill="#000" opacity=".7"><path d="M3 5V3.7A3 3 0 019 3.7V5h.7c.7 0 1.3.6 1.3 1.3v5.4c0 .7-.6 1.3-1.3 1.3H2.3C1.6 13 1 12.4 1 11.7V6.3C1 5.6 1.6 5 2.3 5zM4.3 5h3.4V3.7a1.7 1.7 0 00-3.4 0z" /></svg>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 220 }}>{host}</span>
+                  </span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#000" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" opacity=".7"><path d="M20 12a8 8 0 11-2.6-5.9M20 4v4.5h-4.5" /></svg>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: 44, marginTop: 4, color: BLUE }} aria-hidden="true">
+                  {['arrowLeft', 'arrowRight', 'send', 'book', 'dashboard'].map((ic, i) => <span key={ic} style={{ opacity: i === 1 ? 0.35 : 1 }}><Icon name={ic as IconName} size={24} /></span>)}
+                </div>
+              </div>
+              {screen === 'alert' ? (
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,.4)', display: 'grid', placeItems: 'center' }} role="alertdialog" aria-modal="true" aria-labelledby="ios-alert-t">
+                  <div style={{ width: 270, borderRadius: 14, background: 'rgba(242,242,247,.94)', backdropFilter: 'blur(30px)', overflow: 'hidden', textAlign: 'center' }}>
+                    <div style={{ padding: '20px 16px 16px' }}>
+                      <p id="ios-alert-t" style={{ margin: 0, fontSize: 17, fontWeight: 600, lineHeight: '22px' }}>{t('demoApp.sim.alert.title', { host })}</p>
+                      <p style={{ margin: '4px 0 0', fontSize: 13, lineHeight: '18px' }}>{t('demoApp.sim.alert.message')}</p>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderTop: `0.5px solid ${SEP}` }}>
+                      <button type="button" onClick={() => { push('camera_denied'); go('denied') }} style={{ height: 44, fontSize: 17, color: BLUE, borderRight: `0.5px solid ${SEP}` }}>{t('demoApp.sim.alert.deny')}</button>
+                      <button type="button" onClick={() => { push('camera_allowed'); go('cam') }} style={{ height: 44, fontSize: 17, fontWeight: 600, color: BLUE }}>{t('demoApp.sim.alert.ok')}</button>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
               {/* barra de status e Dynamic Island */}
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 54, color: dark || screen === 'home' ? '#fff' : '#000', pointerEvents: 'none' }} aria-hidden="true">
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 54, color: dark ? '#fff' : '#000', pointerEvents: 'none' }} aria-hidden="true">
                 <span style={{ position: 'absolute', left: 52, top: 18, fontSize: 17, fontWeight: 600 }}>9:41</span>
                 <svg style={{ position: 'absolute', right: 28, top: 20 }} width="68" height="14" viewBox="0 0 68 14" fill="currentColor"><rect x="0" y="9" width="3" height="5" rx="1" /><rect x="5" y="6" width="3" height="8" rx="1" /><rect x="10" y="3" width="3" height="11" rx="1" /><rect x="15" y="0" width="3" height="14" rx="1" /><path d="M29 12.5a1.4 1.4 0 100-2.8 1.4 1.4 0 000 2.8zM24.6 7.4a6.2 6.2 0 018.8 0l-1.3 1.3a4.4 4.4 0 00-6.2 0zM22 4.8a9.9 9.9 0 0114 0l-1.3 1.3a8.1 8.1 0 00-11.4 0z" /><rect x="42" y="1" width="22" height="12" rx="3.5" fill="none" stroke="currentColor" strokeOpacity=".45" /><rect x="44" y="3" width="18" height="8" rx="2" /><rect x="65" y="5" width="1.8" height="4" rx=".9" fillOpacity=".5" /></svg>
               </div>
               <div style={{ position: 'absolute', top: 11, left: '50%', width: 126, height: 37, marginLeft: -63, borderRadius: 19, background: '#000' }} aria-hidden="true" />
-              <div style={{ position: 'absolute', bottom: 8, left: '50%', width: 134, height: 5, marginLeft: -67, borderRadius: 3, background: dark || screen === 'home' ? '#fff' : '#000' }} aria-hidden="true" />
+              <div style={{ position: 'absolute', bottom: 8, left: '50%', width: 134, height: 5, marginLeft: -67, borderRadius: 3, background: '#000' }} aria-hidden="true" />
             </div>
           </div>
         </div>
         <p className="m-0 t-caption text-[var(--ink-muted)]">{t('demoApp.sim.progress', { n: idx + 1, total: FLOW.length })} · {t('demoApp.sim.drawn')}</p>
+        <p className="m-0 max-w-[330px] text-center t-caption text-[var(--ink-muted)]">{t('demoApp.sim.fakeLink', { host })}</p>
         <Button variant="ghost" icon="refresh" onClick={restart}>{t('demoApp.sim.restart')}</Button>
       </div>
 
@@ -210,8 +215,8 @@ export function OnboardingSimulator({ name }: { name: string }) {
 
 /** Tela de app no estilo iOS: fundo agrupado, margens de 20 pt, abaixo da barra de status. */
 function Page({ children }: { children: ReactNode }) {
-  return <div style={{ position: 'absolute', inset: 0, background: '#F2F2F7', padding: '70px 20px 0' }}>{children}</div>
+  return <div style={{ position: 'absolute', inset: 0, background: '#F2F2F7', padding: '64px 20px 0' }}>{children}</div>
 }
 function Bottom({ children }: { children: ReactNode }) {
-  return <div style={{ position: 'absolute', left: 20, right: 20, bottom: 44 }}>{children}</div>
+  return <div style={{ position: 'absolute', left: 20, right: 20, bottom: 24 }}>{children}</div>
 }
