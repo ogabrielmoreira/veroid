@@ -1550,5 +1550,67 @@
     "menuClose": "Close menu",
     "strip": "No camera, no photos, no documents and no data sent: everything here is fictional and runs only in your browser.",
     "credits": "Animations: Noto Emoji © Google (CC BY 4.0). Icons: Material Symbols © Google (Apache 2.0). Fonts: Libre Franklin and Geist (SIL OFL)."
+  },
+  "tapAllow": {
+    "aria": "Animated demo: when the system request appears, tap the Allow button",
+    "deny": "Don't Allow",
+    "allow": "Allow"
+  },
+  "home": {
+    "eyebrow": "Identity verification · KYC",
+    "h1": "Send a link.\nVerify who\nthey are.",
+    "lead": "A white-label platform for identity verification with liveness detection. Each company sends links under its own brand, and customers verify on their phone.",
+    "ctaDemo": "Try the live demo",
+    "ctaSignup": "Create demo account",
+    "ctaSignin": "Sign in",
+    "how": {
+      "eyebrow": "How it works",
+      "title": "One link, three moments",
+      "lead": "The company sends a link, the customer proves who they are on their phone, and the analyst reviews the result.",
+      "s1": {
+        "t": "The company sends a link",
+        "p": "By WhatsApp, SMS, e-mail or QR Code, one by one or in a batch from a CSV. Links expire and can be resent or cancelled."
+      },
+      "s2": {
+        "t": "The customer verifies on mobile",
+        "p": "One decision per screen, under the company’s brand: consent, camera, selfie with liveness, document and a short form."
+      },
+      "s3": {
+        "t": "The analyst reviews",
+        "p": "A queue sorted by risk. Every score comes with its reasons, and a person can always overrule it."
+      }
+    },
+    "wl": {
+      "eyebrow": "White-label",
+      "title": "Every company, its own brand",
+      "lead": "The customer sees the company, not Vero ID. The Brand Kit turns one color into a full scale and refuses combinations that fail WCAG AA. Pick a company and watch the flow change.",
+      "contrast": "Contrast with white"
+    },
+    "phone": {
+      "back": "‹ Back",
+      "title": "Let’s confirm it’s you",
+      "sub": "A quick selfie protects your account from fraud.",
+      "i1t": "Automatic selfie",
+      "i1d": "Center your face; capture is automatic.",
+      "i2t": "Limited use",
+      "i2d": "Camera used for this verification only.",
+      "i3t": "Legal requirement",
+      "i3d": "Banks must confirm the account holder.",
+      "cta": "Continue",
+      "allowTitle": "Tap “Allow”",
+      "allowCap": "Your browser will ask for camera access. Tap <b>Allow</b>.",
+      "priv": "Camera used <b>for this verification only</b>.",
+      "alertTitle": "“{{host}}” Would Like to Access the Camera",
+      "alertMsg": "The camera will be used for the liveness check."
+    },
+    "decision": {
+      "eyebrow": "One design decision",
+      "title": "Explain before you ask",
+      "p": "The camera permission is two taps that can end a verification. So the flow spends one screen showing what will happen and which button to tap, right before the system prompt."
+    },
+    "end": {
+      "title": "Try both sides",
+      "p": "Explore the dashboard without signing up, or simulate the onboarding as if you were the customer."
+    }
   }
 }

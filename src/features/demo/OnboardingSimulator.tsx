@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from '@/components/ui/Alert'
 import { Button } from '@/components/ui/Button'
+import { TapAllowTutorial } from '@/components/TapAllowTutorial'
 import { Icon, type IconName } from '@/components/ui/Icon'
 
 /**
@@ -106,9 +107,9 @@ export function OnboardingSimulator({ name }: { name: string }) {
       case 'alert':
         return (
           <Page>
-            <Badge icon="capture" tone="brand" />
             <Title>{t('demoApp.sim.pre.title')}</Title>
             <Body>{t('demoApp.sim.pre.body')}</Body>
+            <div style={{ marginTop: 20, border: '1px solid var(--border)', borderRadius: 18, background: '#fff', padding: '18px 12px' }}><TapAllowTutorial /></div>
             <Small>{t('demoApp.sim.pre.demo')}</Small>
             <Bottom><Primary onClick={() => { push('permission_prompt'); setScreen('alert') }}>{t('demoApp.sim.pre.cta')}</Primary></Bottom>
           </Page>

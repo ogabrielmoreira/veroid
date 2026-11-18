@@ -25,8 +25,9 @@ export const router = createBrowserRouter(
       ],
     }]),
     ...(demo ? [
-      // Modo vitrine: a home já é o portal de demonstração. Sem Supabase, sem câmera, sem coleta.
-      { path: '/', lazy: async () => ({ Component: (await import('@/features/demo/DemoWorkspace')).DemoWorkspace }) },
+      // Modo vitrine: a home é a landing; o portal de demonstração fica em /demo. Sem Supabase, sem câmera, sem coleta.
+      { path: '/', element: <LandingPage /> },
+      { path: '/demo', lazy: async () => ({ Component: (await import('@/features/demo/DemoWorkspace')).DemoWorkspace }) },
       { path: '*', element: <Navigate to="/" replace /> },
     ] : [
     // Painel público "Explorar sem cadastro" (§10): bundle separado, sem exigir login

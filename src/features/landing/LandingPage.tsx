@@ -1,207 +1,178 @@
-import { lazy, Suspense } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router'
 import { Logo } from '@/components/Logo'
 import { LanguageToggle } from '@/components/Preferences'
-import { Alert } from '@/components/ui/Alert'
 import { Button, ButtonLink } from '@/components/ui/Button'
-import { Icon, type IconName } from '@/components/ui/Icon'
-import heroBiometric from '@/assets/hero-biometric.webp'
 import { markDemoIntent } from '@/lib/demoIntent'
 import { env } from '@/lib/env'
+import { ConsentPhone } from './ConsentPhone'
 
-const LandingPeek = lazy(() => import('./LandingPeek'))
-const DemoInside = lazy(() => import('@/features/demo/DemoCharts').then((m) => ({ default: m.DemoCharts })))
+const HERO_BG =
+  'radial-gradient(900px 520px at 88% 8%, rgba(124,58,237,.42), transparent 60%), radial-gradient(700px 480px at 72% 96%, rgba(224,51,138,.24), transparent 60%), linear-gradient(165deg, #232C6B 0%, #1C2459 45%, #151A43 100%)'
 
-const PILLARS: Array<{ key: 'consent' | 'brand' | 'copilot'; icon: IconName }> = [
-  { key: 'consent', icon: 'shield' },
-  { key: 'brand', icon: 'settings' },
-  { key: 'copilot', icon: 'liveness' },
+const BRANDS = [
+  { name: 'Aurora Digital', ini: 'AD', color: '#232C6B' },
+  { name: 'Verde Bank', ini: 'VB', color: '#0B6B4D' },
+  { name: 'Brasa Seguros', ini: 'BS', color: '#B4232A' },
+  { name: 'Onda Telecom', ini: 'OT', color: '#7A2BD9' },
 ]
 
-const NAV_LINKS: Array<'identity' | 'biometry' | 'security'> = ['identity', 'biometry', 'security']
-
-const CHECKLIST: Array<{ key: 'liveness' | 'biometrics' | 'document'; done: boolean }> = [
-  { key: 'liveness', done: true },
-  { key: 'biometrics', done: true },
-  { key: 'document', done: false },
-]
+function ratio(hex: string) {
+  const c = [1, 3, 5].map((i) => { const v = parseInt(hex.slice(i, i + 2), 16) / 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 })
+  const l = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+  return 1.05 / (l + 0.05)
+}
 
 export function LandingPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const demo = env.maintenance // vitrine: sem criar conta, sem câmera
+  const [brand, setBrand] = useState(BRANDS[0])
+  const wrap = 'mx-auto max-w-[var(--content-max)] px-[clamp(20px,5vw,64px)]'
+  const eyebrow = 't-overline text-[var(--brand-accent)]'
+  const h2 = 'mt-3 max-w-[18ch] text-[clamp(32px,4.4vw,56px)] font-bold leading-[1.03] tracking-[-0.03em]'
+  const whiteBtn = '!bg-white !text-[#232C6B] hover:!bg-[#F0F2FB]'
+
   return (
     <div data-theme="light" className="min-h-dvh overflow-x-clip bg-[var(--surface-page)]">
-      <header className="mx-auto flex max-w-[var(--content-max)] items-center justify-between gap-3 px-[clamp(20px,5vw,64px)] py-5">
-        <Link to="/" className="rounded-md"><Logo /></Link>
-        <nav aria-label={t('landing.nav.label')} className="hidden items-center gap-8 md:flex">
-          {NAV_LINKS.map((key) => (
-            <a
-              key={key}
-              href="#recursos"
-              className="t-overline text-[var(--ink-muted)] transition-colors hover:text-[var(--ink)]"
-            >
-              {t(`landing.nav.${key}`)}
-            </a>
-          ))}
-        </nav>
-        <div className="flex items-center gap-2">
-          <LanguageToggle />
-          <ButtonLink to="/entrar" variant="ghost" className="hidden sm:inline-flex">{demo ? t('landing.demo.ctaGate') : t('auth.signin.submit')}</ButtonLink>
-        </div>
-      </header>
+      <section className="relative overflow-hidden text-white" style={{ background: HERO_BG }}>
+        <header className={`${wrap} flex items-center justify-between gap-3 py-5`}>
+          <Link to="/" className="rounded-md"><Logo inverted /></Link>
+          <div className="flex items-center gap-2">
+            <LanguageToggle inverted />
+            {!demo ? <ButtonLink to="/entrar" variant="ghost" className="hidden !text-white hover:!bg-white/10 sm:inline-flex">{t('home.ctaSignin')}</ButtonLink> : null}
+          </div>
+        </header>
 
-      <main id="main">
-        <section className="relative mx-auto max-w-[var(--content-max)] px-[clamp(20px,5vw,64px)] pb-16 pt-4 lg:pb-28 lg:pt-6">
-          <p className="pointer-events-none absolute right-[clamp(20px,5vw,64px)] top-0 hidden max-w-[190px] text-right t-overline text-[var(--ink-subtle)] xl:block">
-            <span className="mr-1.5 text-[var(--border-strong)]">—</span>{t('landing.corner.tech')}
-          </p>
-
-          <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
-            <div className="enter">
-              <p className="m-0 flex items-center gap-2.5 tabular t-overline text-[var(--ink-subtle)]">
-                <span className="text-[var(--brand-accent)]">{t('landing.step.current')}</span>
-                <span className="h-px w-6 bg-[var(--border-strong)]" aria-hidden="true" />
-                <span>{t('landing.step.total')}</span>
-              </p>
-              <h1 className="mt-4 text-[clamp(34px,5.4vw,56px)] font-bold leading-[1.02] tracking-[-0.034em] text-[var(--ink)] [text-wrap:balance]">
-                {t('landing.title')}
-              </h1>
-              <p className="m-0 mt-5 max-w-[60ch] t-body-lg text-[var(--ink-body)]">{demo ? t('landing.demo.lead') : t('landing.lead')}</p>
+        <main id="main" className={`${wrap} grid items-center gap-10 pb-16 pt-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:pb-24 lg:pt-14`}>
+          <div className="enter">
+            <p className="m-0 t-overline text-white/80">{t('home.eyebrow')}</p>
+            <h1 className="mt-4 whitespace-pre-line text-[clamp(44px,7vw,92px)] font-bold leading-[0.98] tracking-[-0.035em] text-white">{t('home.h1')}</h1>
+            <p className="m-0 mt-6 max-w-[34ch] text-[clamp(18px,1.9vw,24px)] leading-[1.45] text-white/90">{t('home.lead')}</p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               {demo ? (
-                <>
-                  <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                    <ButtonLink to="/demo" iconRight="arrowRight" icon="chart">{t('landing.demo.ctaExplore')}</ButtonLink>
-                    <ButtonLink to="/entrar" variant="secondary" icon="lock">{t('landing.demo.ctaGate')}</ButtonLink>
-                  </div>
-                  <Alert variant="warning" title={t('landing.demo.careTitle')} className="mt-6 max-w-[560px]">{t('landing.demo.careBody')}</Alert>
-                </>
+                <ButtonLink to="/demo" iconRight="arrowRight" className={whiteBtn}>{t('home.ctaDemo')}</ButtonLink>
               ) : (
                 <>
-                  <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                    <Button iconRight="arrowRight" onClick={() => { markDemoIntent(); navigate('/criar-conta') }}>{t('landing.ctaSignup')}</Button>
-                    <ButtonLink to="/demo" variant="secondary" icon="chart">{t('landing.ctaExplore')}</ButtonLink>
-                  </div>
-                  <p className="m-0 mt-3 t-caption text-[var(--ink-muted)]">
-                    {t('landing.ctaSignin')}{' '}
-                    <Link to="/entrar" className="font-medium text-[var(--link)] underline-offset-2 hover:underline">{t('auth.signin.submit')}</Link>
-                  </p>
+                  <Button iconRight="arrowRight" className={whiteBtn} onClick={() => { markDemoIntent(); navigate('/criar-conta') }}>{t('home.ctaSignup')}</Button>
+                  <ButtonLink to="/demo" variant="ghost" icon="chart" className="!border !border-white/50 !text-white hover:!bg-white/10">{t('home.ctaDemo')}</ButtonLink>
                 </>
               )}
-
-              <figure className="m-0 mt-12 flex max-w-[520px] items-start gap-5 border-l-[3px] border-[var(--brand-500)] pl-5">
-                <p className="m-0 tabular font-display text-[40px] font-bold leading-none tracking-[-0.03em] text-[var(--brand-800)]">
-                  {t('landing.statValue')}
-                </p>
-                <figcaption>
-                  <p className="m-0 t-body text-[var(--ink-body)]">{t('landing.statLabel')}</p>
-                </figcaption>
-              </figure>
             </div>
-
-            {demo ? (
-              <div className="mx-auto w-full max-w-[460px] lg:mx-0 lg:ml-auto">
-                <Suspense fallback={<div className="min-h-[320px]" aria-hidden="true" />}><LandingPeek /></Suspense>
-              </div>
-            ) : (
-            <div className="relative mx-auto w-full max-w-[440px] lg:mx-0 lg:ml-auto">
-              <div
-                aria-hidden="true"
-                className="absolute -inset-x-8 -inset-y-8 hidden rounded-full border border-dashed border-[var(--border)] lg:block"
-              />
-              <img
-                src={heroBiometric}
-                alt={t('landing.heroAlt')}
-                width={1040}
-                height={966}
-                className="relative z-0 block w-full select-none"
-                draggable={false}
-              />
-
-              <div className="absolute right-0 top-[6%] w-[172px] rounded-[14px] border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[var(--shadow-overlay)] sm:w-[194px] sm:p-3.5">
-                <p className="m-0 t-overline text-[var(--brand-accent)]">{t('landing.hero.analyzing')}</p>
-                <div className="mt-2 h-1 overflow-hidden rounded-full bg-[var(--brand-100)]">
-                  <div className="h-full w-2/3 rounded-full bg-[var(--brand-500)]" />
-                </div>
-                <ul className="m-0 mt-3 flex list-none flex-col gap-1.5 p-0">
-                  {CHECKLIST.map((c) => (
-                    <li key={c.key} className="flex items-center gap-2 t-caption text-[var(--ink-body)]">
-                      <span
-                        aria-hidden="true"
-                        className={
-                          c.done
-                            ? 'grid size-[18px] shrink-0 place-items-center rounded-full bg-[var(--brand-500)] text-white'
-                            : 'size-[18px] shrink-0 rounded-full border-[1.5px] border-[var(--border-strong)]'
-                        }
-                      >
-                        {c.done ? <Icon name="check" size={16} /> : null}
-                      </span>
-                      {t(`landing.hero.checklist.${c.key}`)}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="absolute bottom-[8%] right-[-4%] flex items-center gap-3 rounded-[14px] bg-[var(--brand-900)] px-4 py-3 text-white shadow-[var(--shadow-overlay)] sm:right-[-10%]">
-                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-white/10">
-                  <Icon name="shield" size={18} />
-                </span>
-                <div>
-                  <p className="m-0 t-overline text-white">{t('landing.hero.verifying')}</p>
-                  <div className="mt-1.5 h-1 w-24 overflow-hidden rounded-full bg-white/20">
-                    <div className="h-full w-2/3 rounded-full bg-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            )}
           </div>
+          <div className="relative mx-auto flex w-full max-w-[560px] justify-center pb-10 lg:pb-14" aria-hidden="true">
+            <div className="w-[46%] max-w-[250px]"><ConsentPhone screen="intro" /></div>
+            <div className="-ml-[6%] mt-10 w-[46%] max-w-[250px]"><ConsentPhone screen="alert" /></div>
+          </div>
+        </main>
+      </section>
 
-          <p className="pointer-events-none absolute bottom-0 left-[clamp(20px,5vw,64px)] hidden max-w-[220px] t-overline text-[var(--ink-subtle)] xl:block">
-            <span className="mr-1.5 text-[var(--border-strong)]">—</span>{t('landing.corner.protection')}
-          </p>
-          <p className="pointer-events-none absolute bottom-0 right-[clamp(20px,5vw,64px)] hidden max-w-[220px] text-right t-overline text-[var(--ink-subtle)] xl:block">
-            {t('landing.corner.identity')}<span className="ml-1.5 text-[var(--border-strong)]">|</span>
-          </p>
-        </section>
-
-        <section id="recursos" className="border-y border-[var(--border)] bg-[var(--surface)]">
-          <ul className="mx-auto m-0 grid max-w-[var(--content-max)] list-none gap-px p-0 md:grid-cols-3">
-            {PILLARS.map((p, i) => (
-              <li key={p.key} className="px-[clamp(20px,5vw,64px)] py-10 md:px-8 lg:px-10">
-                <span className="tabular t-overline text-[var(--ink-muted)]">0{i + 1}</span>
-                <span className="mt-4 grid size-10 place-items-center rounded-md bg-[var(--brand-50)] text-[var(--brand-700)]">
-                  <Icon name={p.icon} size={20} />
-                </span>
-                <h2 className="mt-4 t-h4 font-sans">{t(`landing.pillars.${p.key}.title`)}</h2>
-                <p className="m-0 mt-2 t-body text-[var(--ink-muted)]">{t(`landing.pillars.${p.key}.body`)}</p>
+      <section className="py-[clamp(64px,8vw,112px)]">
+        <div className={wrap}>
+          <p className={eyebrow}>{t('home.how.eyebrow')}</p>
+          <h2 className={h2}>{t('home.how.title')}</h2>
+          <p className="m-0 mt-4 max-w-[62ch] t-body-lg text-[var(--ink-body)]">{t('home.how.lead')}</p>
+          <ol className="m-0 mt-10 grid list-none gap-4 p-0 md:grid-cols-3">
+            {(['s1', 's2', 's3'] as const).map((k, i) => (
+              <li key={k} className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-6">
+                <span className="tabular font-display text-[30px] font-bold leading-none text-[var(--brand-800)]">{i + 1}</span>
+                <h3 className="m-0 font-sans t-h4">{t(`home.how.${k}.t`)}</h3>
+                <p className="m-0 t-body text-[var(--ink-body)]">{t(`home.how.${k}.p`)}</p>
+                <div className="mt-auto pt-4" aria-hidden="true">
+                  {i === 0 ? (
+                    <div className="flex flex-col gap-2">
+                      {[['MS', 'Mariana S.', 'WhatsApp'], ['RC', 'Rafael C.', 'SMS'], ['LP', 'Letícia P.', 'QR']].map(([a, n, c]) => (
+                        <div key={a} className="flex items-center gap-3 rounded-[12px] bg-[var(--n-50)] px-3.5 py-2.5 text-[14px]">
+                          <span className="grid size-[30px] place-items-center rounded-full bg-[var(--brand-100)] text-[12px] font-bold text-[var(--brand-800)]">{a}</span>
+                          <b className="flex-1 font-semibold text-[var(--ink)]">{n}</b>
+                          <span className="rounded-full bg-[var(--brand-50)] px-2.5 py-1 text-[12px] font-semibold text-[var(--brand-800)]">{c}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : i === 1 ? (
+                    <div className="flex flex-wrap gap-2 text-[13px] font-medium">
+                      {([['Consent', 1], ['Camera', 1], ['Selfie', 2], ['Document', 0], ['Form', 0]] as const).map(([l, s]) => (
+                        <span key={l} className={`rounded-full px-3.5 py-2 ${s === 1 ? 'bg-[var(--risk-low-bg)] text-[var(--risk-low-ink)]' : s === 2 ? 'bg-[var(--brand-800)] text-white' : 'bg-[var(--n-100)] text-[var(--n-600)]'}`}>{l}</span>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      {([['#4821', 84, 'high'], ['#4817', 52, 'review'], ['#4809', 12, 'low']] as const).map(([id, v, tone]) => (
+                        <div key={id} className="flex items-center gap-3 rounded-[12px] bg-[var(--n-50)] px-3.5 py-2.5 text-[14px]">
+                          <b className="tabular w-11 font-semibold text-[var(--ink)]">{id}</b>
+                          <span className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--n-100)]"><span className="block h-full rounded-full bg-[var(--brand-500)]" style={{ width: `${v}%` }} /></span>
+                          <span className="tabular rounded-full px-2.5 py-1 text-[12px] font-bold" style={{ background: `var(--risk-${tone}-bg)`, color: `var(--risk-${tone}-ink)` }}>{v}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </li>
             ))}
-          </ul>
-        </section>
+          </ol>
+        </div>
+      </section>
 
-        {demo ? (
-          <section aria-labelledby="inside-h" className="mx-auto flex max-w-[var(--content-max)] flex-col gap-6 px-[clamp(20px,5vw,64px)] py-14">
+      <section className="bg-[var(--surface)] py-[clamp(64px,8vw,112px)]">
+        <div className={wrap}>
+          <p className={eyebrow}>{t('home.wl.eyebrow')}</p>
+          <h2 className={h2}>{t('home.wl.title')}</h2>
+          <p className="m-0 mt-4 max-w-[62ch] t-body-lg text-[var(--ink-body)]">{t('home.wl.lead')}</p>
+          <div className="mt-10 grid items-center gap-8 rounded-[var(--radius-lg)] bg-[var(--n-50)] p-6 md:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] md:p-10">
+            <div className="mx-auto w-full max-w-[250px]"><ConsentPhone screen="intro" org={brand.name} initials={brand.ini} accent={brand.color} /></div>
             <div>
-              <h2 id="inside-h" className="t-h2">{t('landing.demo.insideTitle')}</h2>
-              <p className="m-0 mt-2 max-w-[64ch] t-body text-[var(--ink-muted)]">{t('landing.demo.insideBody')}</p>
+              <div role="group" aria-label="Brand" className="flex flex-wrap gap-2.5">
+                {BRANDS.map((b) => (
+                  <button
+                    key={b.name}
+                    type="button"
+                    aria-pressed={brand.name === b.name}
+                    onClick={() => setBrand(b)}
+                    className="inline-flex min-h-11 items-center gap-2.5 rounded-full bg-[var(--surface)] py-2 pl-2.5 pr-4 text-[14px] font-semibold text-[var(--ink)] shadow-[0_0_0_1px_var(--border)] aria-pressed:shadow-[0_0_0_2px_var(--ink)]"
+                  >
+                    <i className="size-[22px] rounded-full" style={{ background: b.color }} />{b.name}
+                  </button>
+                ))}
+              </div>
+              <p className="m-0 mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--surface)] px-3.5 py-2 font-mono text-[12.5px] text-[var(--ink-body)]">
+                {t('home.wl.contrast')} <b className="text-[var(--risk-low-ink)]">{ratio(brand.color).toFixed(1)}:1 · AA ✓</b>
+              </p>
             </div>
-            <Suspense fallback={<div className="min-h-[400px]" aria-hidden="true" />}><DemoInside /></Suspense>
-          </section>
-        ) : null}
-      </main>
+          </div>
+        </div>
+      </section>
 
-      <footer className="mx-auto flex max-w-[var(--content-max)] flex-col gap-4 px-[clamp(20px,5vw,64px)] py-10 md:flex-row md:items-start md:justify-between">
+      <section className="py-[clamp(64px,8vw,112px)]">
+        <div className={`${wrap} grid items-center gap-10 lg:grid-cols-2`}>
+          <div>
+            <p className={eyebrow}>{t('home.decision.eyebrow')}</p>
+            <h2 className={`${h2} max-w-[14ch]`}>{t('home.decision.title')}</h2>
+            <p className="m-0 mt-4 max-w-[52ch] t-body-lg text-[var(--ink-body)]">{t('home.decision.p')}</p>
+          </div>
+          <div className="mx-auto flex w-full max-w-[560px] justify-center" aria-hidden="true">
+            <div className="w-[46%] max-w-[250px]"><ConsentPhone screen="allow" /></div>
+            <div className="-ml-[4%] mt-8 w-[46%] max-w-[250px]"><ConsentPhone screen="alert" /></div>
+          </div>
+        </div>
+      </section>
+
+      <section className="text-white" style={{ background: HERO_BG }}>
+        <div className={`${wrap} flex flex-col items-center py-[clamp(72px,9vw,120px)] text-center`}>
+          <Logo inverted className="mb-6" />
+          <h2 className="m-0 text-[clamp(32px,4.6vw,56px)] font-bold leading-[1.04] tracking-[-0.03em] !text-white">{t('home.end.title')}</h2>
+          <p className="m-0 mt-4 max-w-[52ch] text-[18px] leading-[1.6] text-white/85">{t('home.end.p')}</p>
+          <div className="mt-8"><ButtonLink to="/demo" iconRight="arrowRight" className={whiteBtn}>{t('home.ctaDemo')}</ButtonLink></div>
+        </div>
+      </section>
+
+      <footer className={`${wrap} flex flex-col gap-4 py-10 md:flex-row md:items-start md:justify-between`}>
         <div className="flex flex-col gap-2">
           <p className="m-0 max-w-[62ch] t-caption text-[var(--ink-muted)]">{t('honesty')}</p>
           <Link to="/privacidade" className="t-caption font-medium text-[var(--link)] underline-offset-2 hover:underline">{t('landing.privacyLink')}</Link>
         </div>
         <p className="m-0 t-caption text-[var(--ink-muted)]">
-          <a href="https://gabrielmoreira.tech" className="font-medium text-[var(--link)] underline-offset-2 hover:underline">
-            Gabriel Moreira
-          </a>{' '}
-          · @GabrielTechDesign
+          <a href="https://gabrielmoreira.tech" className="font-medium text-[var(--link)] underline-offset-2 hover:underline">Gabriel Moreira</a>{' '}· @GabrielTechDesign
         </p>
       </footer>
     </div>

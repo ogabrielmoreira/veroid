@@ -1550,5 +1550,67 @@
     "menuClose": "Fechar menu",
     "strip": "Sem câmera, sem fotos, sem documentos e sem envio de dados: tudo aqui é fictício e roda só no seu navegador.",
     "credits": "Animações: Noto Emoji © Google (CC BY 4.0). Ícones: Material Symbols © Google (Apache 2.0). Fontes: Libre Franklin e Geist (SIL OFL)."
+  },
+  "tapAllow": {
+    "aria": "Demonstração animada: quando a solicitação do sistema aparecer, toque no botão Permitir",
+    "deny": "Não Permitir",
+    "allow": "Permitir"
+  },
+  "home": {
+    "eyebrow": "Verificação de identidade · KYC",
+    "h1": "Envie um link.\nConfirme quem\né a pessoa.",
+    "lead": "Uma plataforma white-label de verificação de identidade com prova de vida. Cada empresa envia links com a própria marca, e o cliente se verifica no celular.",
+    "ctaDemo": "Testar a demo ao vivo",
+    "ctaSignup": "Criar conta demo",
+    "ctaSignin": "Entrar",
+    "how": {
+      "eyebrow": "Como funciona",
+      "title": "Um link, três momentos",
+      "lead": "A empresa envia um link, o cliente prova quem é no celular e o analista revisa o resultado.",
+      "s1": {
+        "t": "A empresa envia um link",
+        "p": "Por WhatsApp, SMS, e-mail ou QR Code, um a um ou em lote por CSV. Os links expiram e podem ser reenviados ou cancelados."
+      },
+      "s2": {
+        "t": "O cliente verifica no celular",
+        "p": "Uma decisão por tela, com a marca da empresa: consentimento, câmera, selfie com prova de vida, documento e um formulário curto."
+      },
+      "s3": {
+        "t": "O analista revisa",
+        "p": "Uma fila ordenada por risco. Todo score vem com os motivos, e uma pessoa sempre pode contestá-lo."
+      }
+    },
+    "wl": {
+      "eyebrow": "White-label",
+      "title": "Cada empresa, com a sua marca",
+      "lead": "O cliente vê a empresa, não o Vero ID. O Brand Kit transforma uma cor em uma escala completa e recusa combinações que falham no WCAG AA. Escolha uma empresa e veja o fluxo mudar.",
+      "contrast": "Contraste com branco"
+    },
+    "phone": {
+      "back": "‹ Voltar",
+      "title": "Vamos confirmar que é você",
+      "sub": "Uma selfie rápida protege sua conta contra fraudes.",
+      "i1t": "Selfie automática",
+      "i1d": "Centralize o rosto; a captura é automática.",
+      "i2t": "Uso restrito",
+      "i2d": "Câmera usada apenas nesta verificação.",
+      "i3t": "Exigência legal",
+      "i3d": "Bancos precisam confirmar o titular da conta.",
+      "cta": "Avançar",
+      "allowTitle": "Toque em “Permitir”",
+      "allowCap": "O navegador vai pedir acesso à câmera. Toque em <b>Permitir</b>.",
+      "priv": "Câmera usada <b>só nesta verificação</b>.",
+      "alertTitle": "“{{host}}” Deseja Acessar a Câmera",
+      "alertMsg": "A câmera será usada para a prova de vida."
+    },
+    "decision": {
+      "eyebrow": "Uma decisão de design",
+      "title": "Explicar antes de pedir",
+      "p": "A permissão de câmera são dois toques que podem encerrar uma verificação. Por isso o fluxo gasta uma tela mostrando o que vai acontecer e qual botão tocar, logo antes do prompt do sistema."
+    },
+    "end": {
+      "title": "Teste os dois lados",
+      "p": "Explore o painel sem cadastro ou simule o onboarding como se fosse o cliente."
+    }
   }
 }
